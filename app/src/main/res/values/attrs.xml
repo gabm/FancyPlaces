@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="com.example.gabm.fancyplaces.VerticalCardView">
+        <attr name="card_title" format="string" />
+    </declare-styleable>
+</resources>
