@@ -12,7 +12,8 @@
     <ImageView
         android:id="@+id/li_fp_thumbnail"
         android:layout_width="50dp"
-        android:layout_height="fill_parent" />
+        android:layout_height="50dp"
+        android:src="@drawable/ic_camera_grey600_48dp" />
 
     <TextView
         android:id="@+id/li_fp_title"

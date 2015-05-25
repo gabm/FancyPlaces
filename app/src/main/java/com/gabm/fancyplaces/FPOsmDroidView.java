@@ -1,35 +1,41 @@
-package com.example.gabm.fancyplaces;
+package com.gabm.fancyplaces;
 
 import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.osmdroid.ResourceProxy;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.ResourceProxyImpl;
+import org.osmdroid.views.MapView;
+
 /**
- * Created by gabm on 15/05/15.
+ * Created by gabm on 23/05/15.
  */
-public class FPMapView extends TabItem implements MapFragmentHandler.OnFPClickListener, LocationHandler.OnLocationUpdatedListener {
+public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocationUpdatedListener {
 
     private final static int LOCATION_UPDATED_INIT = 0;
     private final static int LOCATION_UPDATED_GPS = 1;
-    private static MyFancyPlacesApplication curAppContext = null;
-    private OnFancyPlaceSelectedListener fancyPlaceSelectedCallback = null;
-    private MapFragmentHandler mapHandler = null;
-    private MainWindow parent = null;
+    private ResourceProxy mResourceProxy = null;
+    private MapView mMapView = null;
+    private OsmMapHandler mapHandler = null;
     private LocationHandler locationHandler = null;
+    private OnFancyPlaceSelectedListener fancyPlaceSelectedCallback = null;
+    private MainWindow parent = null;
 
-    public static FPMapView newInstance() {
-        FPMapView result = new FPMapView();
+    public static FPOsmDroidView newInstance() {
+        FPOsmDroidView result = new FPOsmDroidView();
+
         return result;
     }
 
     @Override
-    public void onFPClicked(int id) {
-        fancyPlaceSelectedCallback.onFancyPlaceSelected(id, OnFancyPlaceSelectedListener.INTENT_VIEW);
+    public String getTitle() {
+        return "OSM View";
     }
 
     @Override
@@ -50,6 +56,25 @@ public class FPMapView extends TabItem implements MapFragmentHandler.OnFPClickLi
         }
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mResourceProxy = new ResourceProxyImpl(inflater.getContext().getApplicationContext());
+
+        mMapView = new MapView(inflater.getContext(), 128, mResourceProxy);
+        mMapView.setTileSource(TileSourceFactory.MAPQUESTOSM);
+        mMapView.setMultiTouchControls(true);
+        mMapView.setTilesScaledToDpi(true);
+
+        mapHandler = new OsmMapHandler(mMapView);
+        mapHandler.setAdapter(parent.fancyPlaceArrayAdapter);
+
+        locationHandler = new LocationHandler(getActivity());
+        onLocationUpdated(locationHandler.getCurLocation(), LOCATION_UPDATED_INIT);
+        requestLocationUpdate();
+
+        return mMapView;
+    }
+
     private void requestLocationUpdate() {
         if (locationHandler.requireNewLocationUpdate()) {
             locationHandler.updateLocation();
@@ -65,25 +90,6 @@ public class FPMapView extends TabItem implements MapFragmentHandler.OnFPClickLi
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fancy_places_map_view, container, false);
-
-        curAppContext = (MyFancyPlacesApplication) getActivity().getApplicationContext();
-
-
-        WorkaroundMapFragment map = (WorkaroundMapFragment) getChildFragmentManager().findFragmentById(R.id.fp_map);
-        mapHandler = new MapFragmentHandler(map.getMap());
-        mapHandler.setOnFPClickedListener(this);
-        mapHandler.setAdapter(parent.fancyPlaceArrayAdapter);
-
-        locationHandler = new LocationHandler(getActivity());
-        onLocationUpdated(locationHandler.getCurLocation(), LOCATION_UPDATED_INIT);
-        requestLocationUpdate();
-
-        return v;
-    }
-
-    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
@@ -94,11 +100,4 @@ public class FPMapView extends TabItem implements MapFragmentHandler.OnFPClickLi
 
         }
     }
-
-    @Override
-    public String getTitle() {
-        return "Map";
-    }
-
-
 }
