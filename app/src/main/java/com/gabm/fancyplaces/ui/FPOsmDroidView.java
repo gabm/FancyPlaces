@@ -16,7 +16,6 @@ import com.gabm.fancyplaces.functional.OsmMapHandler;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.ResourceProxyImpl;
-import org.osmdroid.views.MapView;
 
 /**
  * Created by gabm on 23/05/15.
@@ -26,7 +25,7 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
     private final static int LOCATION_UPDATED_INIT = 0;
     private final static int LOCATION_UPDATED_GPS = 1;
     private ResourceProxy mResourceProxy = null;
-    private MapView mMapView = null;
+    private OsmMapViewScrollWorkaround mMapView = null;
     private OsmMapHandler mapHandler = null;
     private LocationHandler locationHandler = null;
     private OnFancyPlaceSelectedListener fancyPlaceSelectedCallback = null;
@@ -65,10 +64,11 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mResourceProxy = new ResourceProxyImpl(inflater.getContext().getApplicationContext());
 
-        mMapView = new MapView(inflater.getContext(), 128, mResourceProxy);
+        mMapView = new OsmMapViewScrollWorkaround(inflater.getContext(), 128, mResourceProxy);
         mMapView.setTileSource(TileSourceFactory.MAPQUESTOSM);
         mMapView.setMultiTouchControls(true);
         mMapView.setTilesScaledToDpi(true);
+        mMapView.setWorkaroundEnabled(true);
 
         mapHandler = new OsmMapHandler(mMapView);
         mapHandler.setAdapter(parent.fancyPlaceArrayAdapter);

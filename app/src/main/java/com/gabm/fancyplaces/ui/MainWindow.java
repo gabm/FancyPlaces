@@ -94,7 +94,6 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
         // add to list
         tabList.add(FPListView.newInstance());
-        //tabList.add(FPMapView.newInstance());
         tabList.add(FPOsmDroidView.newInstance());
         return tabList;
     }

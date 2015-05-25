@@ -16,7 +16,7 @@ public interface IMapHandler {
 
     void clearMarkers();
 
-    void addMarker(double lat, double lng, String text);
+    void addMarker(double lat, double lng, String text, boolean showInfoWindow);
 
     void setCurrentLocationMarker(double lat, double lng, String title);
 

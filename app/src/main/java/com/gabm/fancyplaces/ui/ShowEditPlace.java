@@ -15,20 +15,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.R;
 import com.gabm.fancyplaces.data.FancyPlace;
+import com.gabm.fancyplaces.functional.IMapHandler;
 import com.gabm.fancyplaces.functional.LocationHandler;
+import com.gabm.fancyplaces.functional.OsmMapHandler;
 import com.gabm.fancyplaces.functional.ScrollViewListener;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
+
+import org.osmdroid.views.MapView;
 
 
-public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapLongClickListener, LocationHandler.OnLocationUpdatedListener {
+public class ShowEditPlace extends AppCompatActivity implements LocationHandler.OnLocationUpdatedListener {
 
 
     static public final int MODE_VIEW = 0;
@@ -44,7 +45,7 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
     ViewElements currentViewElements = new ViewElements();
     private SEPState currentState = new SEPState();
     private LocationHandler locationHandler = null;
-    private MapFragmentHandler mapHandler;
+    private IMapHandler mapHandler = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +58,8 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
 
         setupFadingToolbar();
 
-        currentViewElements.mapFragment.setListener(
-                new WorkaroundMapFragment.OnTouchListener() {
-                    @Override
-                    public void onTouch() {
-                        ((ScrollView) findViewById(R.id.sep_scroll_view)).requestDisallowInterceptTouchEvent(true);
-                    }
-                });
-
-        mapHandler = new MapFragmentHandler(currentViewElements.mapFragment.getMap());
-        mapHandler.setOnMapLongClickListener(this);
+        mapHandler = new OsmMapHandler(currentViewElements.mapView);
+        currentViewElements.mapView.setEnabled(false);
 
         locationHandler = new LocationHandler(this);
         locationHandler.setOnLocationUpdatedListener(this);
@@ -143,7 +136,6 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
         double lng = Double.valueOf(currentState.data.getLocationLong());
 
         setMarker(lat, lng, title);
-
 
         switch (reason) {
             case LOCATION_CHANGED_GPS:
@@ -264,8 +256,8 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
 
         // map
         currentViewElements.mapCard = (VerticalCardView) findViewById(R.id.sep_map_card);
-        currentViewElements.mapFragment = ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.sep_map));
         currentViewElements.mapUpdateButton = (Button) findViewById(R.id.sep_map_update_button);
+        currentViewElements.mapView = (MapView) findViewById(R.id.sep_map);
 
         // notes
         currentViewElements.notesCard = (VerticalCardView) findViewById(R.id.sep_notes_card);
@@ -282,6 +274,8 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
         currentViewElements.scrollView = (ObservableScrollView) findViewById(R.id.sep_scroll_view);
     }
 
+    //TODO: replace with osm
+    /*
     @Override
     public void onMapLongClick(LatLng latLng) {
         if (currentState.mode != MODE_EDIT)
@@ -292,6 +286,7 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
 
         onLocationChanged(LOCATION_CHANGED_USER);
     }
+    */
 
     protected void setStateFromIntent(Intent intent) {
         Bundle extras = intent.getExtras();
@@ -422,7 +417,7 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
 
     protected void setMarker(double lat, double lng, String title) {
         mapHandler.clearMarkers();
-        mapHandler.addMarker(lat, lng, title);
+        mapHandler.addMarker(lat, lng, title, true);
         mapHandler.animateCamera(lat, lng, com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_ZOOM_NEAR, com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_DURATION);
     }
 
@@ -433,8 +428,8 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
 
         // map
         public VerticalCardView mapCard = null;
-        public WorkaroundMapFragment mapFragment = null;
         public Button mapUpdateButton = null;
+        public MapView mapView = null;
 
         // notes
         public VerticalCardView notesCard = null;

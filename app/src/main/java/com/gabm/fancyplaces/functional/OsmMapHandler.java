@@ -3,11 +3,12 @@ package com.gabm.fancyplaces.functional;
 import android.database.DataSetObserver;
 import android.widget.ArrayAdapter;
 
+import com.gabm.fancyplaces.R;
 import com.gabm.fancyplaces.data.FancyPlace;
+import com.gabm.fancyplaces.ui.OsmMarker;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
-import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
@@ -35,14 +36,15 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler {
     @Override
     public void animateCamera(double lat, double lng, int duration) {
         IGeoPoint pt = new GeoPoint(lat, lng);
-        curMapController.animateTo(pt);
+        curMapController.setCenter(pt);
 
     }
 
     @Override
     public void animateCamera(double lat, double lng, float zoom, int duration) {
         IGeoPoint pt = new GeoPoint(lat, lng);
-        curMapController.animateTo(pt);
+        curMapController.setCenter(pt);
+        curMapController.setZoom((int) zoom);
     }
 
     @Override
@@ -52,12 +54,19 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler {
     }
 
     @Override
-    public void addMarker(double lat, double lng, String text) {
-        Marker startMarker = new Marker(curMapView);
+    public void addMarker(double lat, double lng, String text, boolean showInfoWindow) {
+        OsmMarker marker = new OsmMarker(curMapView.getContext(), curMapView);
+
         GeoPoint pt = new GeoPoint(lat, lng);
-        startMarker.setPosition(pt);
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        curMapView.getOverlays().add(startMarker);
+        marker.setPosition(pt);
+        marker.setIcon(curMapView.getContext().getDrawable(R.drawable.ic_pin));
+        marker.setAnchor(OsmMarker.ANCHOR_CENTER, OsmMarker.ANCHOR_BOTTOM);
+        marker.setTitle(text);
+
+        if (showInfoWindow)
+            marker.toogleInfoWindow();
+
+        curMapView.getOverlays().add(marker);
         curMapView.invalidate();
     }
 
@@ -84,7 +93,7 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler {
             FancyPlace fp = adapter.getItem(i);
             addMarker(Double.valueOf(fp.getLocationLat()),
                     Double.valueOf(fp.getLocationLong()),
-                    fp.getTitle());
+                    fp.getTitle(), false);
         }
     }
 
