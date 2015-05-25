@@ -1,7 +1,9 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.ui;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.gabm.fancyplaces.data.ImageFile;
 
 /**
  * Created by gabm on 29.12.14.

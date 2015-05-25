@@ -1,6 +1,8 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.functional;
 
 import android.widget.ArrayAdapter;
+
+import com.gabm.fancyplaces.data.FancyPlace;
 
 /**
  * Created by gabm on 24/05/15.

@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.gabm.fancyplaces.R;
+import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 import com.melnykov.fab.FloatingActionButton;
 
 /**

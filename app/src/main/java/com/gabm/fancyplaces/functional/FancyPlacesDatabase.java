@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.functional;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,6 +7,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.gabm.fancyplaces.FancyPlacesApplication;
+import com.gabm.fancyplaces.data.FancyPlace;
+import com.gabm.fancyplaces.data.ImageFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +39,7 @@ public class FancyPlacesDatabase extends SQLiteOpenHelper {
             + COLUMN_LOCATION_LONG + " text not null, "
             + COLUMN_IMAGE_LOCATION + " text not null"
             + ");";
-    private static MyFancyPlacesApplication currentAppContext = null;
+    private static FancyPlacesApplication currentAppContext = null;
     public String[] allColumns = {
             COLUMN_ID,
             COLUMN_TITLE,
@@ -48,7 +52,7 @@ public class FancyPlacesDatabase extends SQLiteOpenHelper {
     public FancyPlacesDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
-        currentAppContext = (MyFancyPlacesApplication) context;
+        currentAppContext = (FancyPlacesApplication) context;
     }
 
     public void open() throws SQLException {
@@ -143,7 +147,7 @@ public class FancyPlacesDatabase extends SQLiteOpenHelper {
             while (!cursor.isAfterLast()) {
                 FancyPlace fpFromSQL = cursorToFancyPlace(cursor);
 
-                fpFromSQL.getImage().scaleDown(MyFancyPlacesApplication.TARGET_PIX_SIZE);
+                fpFromSQL.getImage().scaleDown(com.gabm.fancyplaces.FancyPlacesApplication.TARGET_PIX_SIZE);
 
                 cursor.moveToNext();
             }

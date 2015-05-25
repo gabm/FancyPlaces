@@ -1,9 +1,11 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.ui;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
+
+import com.gabm.fancyplaces.data.FancyPlace;
 
 /**
  * Created by gabm on 24.12.14.

@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,15 @@ import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import com.gabm.fancyplaces.FancyPlacesApplication;
+import com.gabm.fancyplaces.R;
+import com.gabm.fancyplaces.data.FancyPlace;
+import com.gabm.fancyplaces.data.ImageFile;
+import com.gabm.fancyplaces.functional.FancyPlaceListViewAdapter;
+import com.gabm.fancyplaces.functional.FancyPlacesDatabase;
+import com.gabm.fancyplaces.functional.MainWindowViewpagerAdapter;
+import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -23,7 +32,7 @@ import java.util.List;
 public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelectedListener {
 
     public static int REQUEST_SHOW_EDIT_PLACE = 0;
-    private static MyFancyPlacesApplication curAppContext = null;
+    private static FancyPlacesApplication curAppContext = null;
     public FancyPlaceListViewAdapter fancyPlaceArrayAdapter = null;
     ViewPager pager;
     MainWindowViewpagerAdapter viewpagerAdapter;
@@ -37,7 +46,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
 
-        curAppContext = (MyFancyPlacesApplication) getApplicationContext();
+        curAppContext = (FancyPlacesApplication) getApplicationContext();
 
         // inflate toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_window_toolbar);
@@ -50,7 +59,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         fancyPlaces = (ArrayList<FancyPlace>) fancyPlacesDatabase.getAllFancyPlaces();
         fancyPlaceArrayAdapter = new FancyPlaceListViewAdapter(getApplicationContext(), R.layout.list_item_fancy_place, fancyPlaces);
 
-        MyFancyPlacesApplication.TMP_IMAGE_FULL_PATH = curAppContext.getExternalCacheDir() + File.separator + MyFancyPlacesApplication.TMP_IMAGE_FILENAME;
+        com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FULL_PATH = curAppContext.getExternalCacheDir() + File.separator + com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FILENAME;
         ImageFile.curAppContext = curAppContext;
 
         // viewpager
@@ -132,10 +141,10 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         // copy img to tmp location
         if (fp.getImage().exists()) {
             curState.OriginalImageFile = fp.getImage();
-            fp.setImage(curState.OriginalImageFile.copy(MyFancyPlacesApplication.TMP_IMAGE_FULL_PATH));
+            fp.setImage(curState.OriginalImageFile.copy(com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FULL_PATH));
         } else {
             curState.OriginalImageFile = null;
-            fp.setImage(new ImageFile(MyFancyPlacesApplication.TMP_IMAGE_FULL_PATH));
+            fp.setImage(new ImageFile(com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FULL_PATH));
         }
     }
 
@@ -200,7 +209,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             } else {
                 fancyPlace.setImage(curState.OriginalImageFile);
             }
-            (new ImageFile(MyFancyPlacesApplication.TMP_IMAGE_FULL_PATH)).delete();
+            (new ImageFile(com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FULL_PATH)).delete();
 
         }
     }

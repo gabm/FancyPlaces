@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.data;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +11,8 @@ import android.graphics.RectF;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+
+import com.gabm.fancyplaces.FancyPlacesApplication;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,7 +38,7 @@ public class ImageFile implements Parcelable, Serializable {
             return new ImageFile[size];
         }
     };
-    public static MyFancyPlacesApplication curAppContext = null;
+    public static FancyPlacesApplication curAppContext = null;
     private String FileName;
 
     public ImageFile() {
@@ -230,7 +232,7 @@ public class ImageFile implements Parcelable, Serializable {
         SerializableImage img = (SerializableImage) ois.readObject();
 
         // save image to tmp dir
-        ImageFile tmpImgFile = ImageFile.saveBitmap(img.getImage(), MyFancyPlacesApplication.TMP_IMAGE_FULL_PATH);
+        ImageFile tmpImgFile = ImageFile.saveBitmap(img.getImage(), com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FULL_PATH);
         FileName = tmpImgFile.FileName;
     }
 

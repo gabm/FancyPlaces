@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.functional;
 
 import android.app.Activity;
 import android.content.Context;

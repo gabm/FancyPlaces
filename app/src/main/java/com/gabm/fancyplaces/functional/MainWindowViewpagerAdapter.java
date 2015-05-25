@@ -1,9 +1,11 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.functional;
 
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+
+import com.gabm.fancyplaces.ui.TabItem;
 
 import java.util.ArrayList;
 import java.util.List;

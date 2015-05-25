@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.functional;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.gabm.fancyplaces.R;
+import com.gabm.fancyplaces.data.FancyPlace;
 
 import java.util.List;
 

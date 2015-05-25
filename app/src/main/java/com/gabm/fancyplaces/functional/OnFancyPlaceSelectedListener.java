@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.functional;
 
 /**
  * Created by gabm on 15/05/15.

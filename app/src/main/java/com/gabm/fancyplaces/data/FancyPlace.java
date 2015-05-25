@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.data;
 
 import android.content.ContentResolver;
 import android.net.Uri;

@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.ui;
 /*
  * Copyright 2014 Google Inc. All rights reserved.
  *

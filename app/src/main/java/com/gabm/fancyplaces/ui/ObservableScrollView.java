@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.ui;
 
 /**
  * Created by gabm on 19/05/15.
@@ -7,6 +7,8 @@ package com.gabm.fancyplaces;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ScrollView;
+
+import com.gabm.fancyplaces.functional.ScrollViewListener;
 
 
 public class ObservableScrollView extends ScrollView {

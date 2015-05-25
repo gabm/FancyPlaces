@@ -1,8 +1,10 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.functional;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.widget.ImageView;
+
+import com.gabm.fancyplaces.data.ImageFile;
 
 import java.lang.ref.WeakReference;
 

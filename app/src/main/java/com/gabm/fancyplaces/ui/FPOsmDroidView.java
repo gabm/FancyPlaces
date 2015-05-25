@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.ui;
 
 import android.app.Activity;
 import android.location.Location;
@@ -7,6 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.gabm.fancyplaces.R;
+import com.gabm.fancyplaces.functional.LocationHandler;
+import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
+import com.gabm.fancyplaces.functional.OsmMapHandler;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -47,7 +52,7 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
         if (location != null) {
             switch (reason) {
                 case LOCATION_UPDATED_INIT:
-                    mapHandler.setCamera(location.getLatitude(), location.getLongitude(), MyFancyPlacesApplication.MAP_DEFAULT_ZOOM_FAR);
+                    mapHandler.setCamera(location.getLatitude(), location.getLongitude(), com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_ZOOM_FAR);
                     break;
                 case LOCATION_UPDATED_GPS:
                     break;

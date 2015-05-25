@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    tools:context="com.gabm.fancyplaces.ShowEditPlace">
+    tools:context="com.gabm.fancyplaces.ui.ShowEditPlace">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/sep_toolbar"
@@ -14,7 +14,7 @@
         android:elevation="16dp"
         android:minHeight="?attr/actionBarSize" />
 
-    <com.gabm.fancyplaces.ObservableScrollView
+    <com.gabm.fancyplaces.ui.ObservableScrollView
         android:id="@+id/sep_scroll_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
@@ -42,7 +42,7 @@
                 android:fitsSystemWindows="true"
                 android:orientation="vertical">
 
-                <com.gabm.fancyplaces.VerticalCardView
+                <com.gabm.fancyplaces.ui.VerticalCardView
                     android:id="@+id/sep_title_card"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -55,9 +55,9 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:singleLine="true" />
-                </com.gabm.fancyplaces.VerticalCardView>
+                </com.gabm.fancyplaces.ui.VerticalCardView>
 
-                <com.gabm.fancyplaces.VerticalCardView
+                <com.gabm.fancyplaces.ui.VerticalCardView
                     android:id="@+id/sep_map_card"
                     android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -80,9 +80,9 @@
                         android:text="@string/sep_update_map_button" />
 
 
-                </com.gabm.fancyplaces.VerticalCardView>
+                </com.gabm.fancyplaces.ui.VerticalCardView>
 
-                <com.gabm.fancyplaces.VerticalCardView
+                <com.gabm.fancyplaces.ui.VerticalCardView
                     android:id="@+id/sep_notes_card"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
@@ -103,7 +103,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center_horizontal"
                         android:gravity="top" />
-                </com.gabm.fancyplaces.VerticalCardView>
+                </com.gabm.fancyplaces.ui.VerticalCardView>
 
 
                 <LinearLayout
@@ -125,6 +125,6 @@
                 </LinearLayout>
         </LinearLayout>
         </LinearLayout>
-    </com.gabm.fancyplaces.ObservableScrollView>
+    </com.gabm.fancyplaces.ui.ObservableScrollView>
 
 </FrameLayout>

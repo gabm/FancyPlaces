@@ -1,7 +1,9 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.functional;
 
 import android.database.DataSetObserver;
 import android.widget.ArrayAdapter;
+
+import com.gabm.fancyplaces.data.FancyPlace;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;

@@ -1,4 +1,4 @@
-package com.gabm.fancyplaces;
+package com.gabm.fancyplaces.ui;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -19,6 +19,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gabm.fancyplaces.FancyPlacesApplication;
+import com.gabm.fancyplaces.R;
+import com.gabm.fancyplaces.data.FancyPlace;
+import com.gabm.fancyplaces.functional.LocationHandler;
+import com.gabm.fancyplaces.functional.ScrollViewListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -35,7 +40,7 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
     static private final int LOCATION_CHANGED_USER = 1;
     static private final int LOCATION_CHANGED_INIT = 2;
     static private final int REQUEST_IMAGE_CAPTURE = 0;
-    static private MyFancyPlacesApplication curAppContext = null;
+    static private FancyPlacesApplication curAppContext = null;
     ViewElements currentViewElements = new ViewElements();
     private SEPState currentState = new SEPState();
     private LocationHandler locationHandler = null;
@@ -46,7 +51,7 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_edit_place);
 
-        curAppContext = (MyFancyPlacesApplication) getApplicationContext();
+        curAppContext = (FancyPlacesApplication) getApplicationContext();
 
         updateElementIDs();
 
@@ -142,13 +147,13 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
 
         switch (reason) {
             case LOCATION_CHANGED_GPS:
-                mapHandler.animateCamera(lat, lng, MyFancyPlacesApplication.MAP_DEFAULT_ZOOM_NEAR, MyFancyPlacesApplication.MAP_DEFAULT_DURATION);
+                mapHandler.animateCamera(lat, lng, com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_ZOOM_NEAR, com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_DURATION);
                 break;
             case LOCATION_CHANGED_USER:
-                mapHandler.animateCamera(lat, lng, MyFancyPlacesApplication.MAP_DEFAULT_DURATION);
+                mapHandler.animateCamera(lat, lng, com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_DURATION);
                 break;
             case LOCATION_CHANGED_INIT:
-                mapHandler.setCamera(lat, lng, MyFancyPlacesApplication.MAP_DEFAULT_ZOOM_NEAR);
+                mapHandler.setCamera(lat, lng, com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_ZOOM_NEAR);
                 break;
         }
     }
@@ -388,7 +393,7 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
-            currentState.data.getImage().scaleDown(MyFancyPlacesApplication.TARGET_PIX_SIZE);
+            currentState.data.getImage().scaleDown(com.gabm.fancyplaces.FancyPlacesApplication.TARGET_PIX_SIZE);
             currentState.image = currentState.data.getImage().loadFullSizeImage();
             onActivityModeChanged();
         }
@@ -418,7 +423,7 @@ public class ShowEditPlace extends AppCompatActivity implements GoogleMap.OnMapL
     protected void setMarker(double lat, double lng, String title) {
         mapHandler.clearMarkers();
         mapHandler.addMarker(lat, lng, title);
-        mapHandler.animateCamera(lat, lng, MyFancyPlacesApplication.MAP_DEFAULT_ZOOM_NEAR, MyFancyPlacesApplication.MAP_DEFAULT_DURATION);
+        mapHandler.animateCamera(lat, lng, com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_ZOOM_NEAR, com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_DURATION);
     }
 
     protected class ViewElements {
