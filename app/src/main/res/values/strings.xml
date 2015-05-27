@@ -2,34 +2,14 @@
 <resources>
 
     <string name="app_name">Fancy Places</string>
-    <string name="action_settings">Settings23</string>
-    <string name="title">Title</string>
-    <string name="location_lat">Latitude</string>
-    <string name="location_long">Longitude</string>
     <string name="notes">Notes</string>
     <string name="context_menu_delete">Delete</string>
     <string name="context_menu_share">Share</string>
-    <string name="button_add_new">Add new place</string>
-    <string name="save_fancy_place">Save this Fancy Place</string>
-    <string name="title_activity_list_fancy_places">My Fancy Places</string>
-    <string name="title_activity_add_new_fancy_place">Add New Fancy Place</string>
-    <string name="title_activity_show_fancy_place">Show Fancy Place</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="take_photo">Take Photo</string>
-    <string name="location_title">Location</string>
-    <string name="notes_title">Notes</string>
-    <string name="image_title">Image</string>
-    <string name="location">Location</string>
+    <string name="title_activity_list_fancy_places">Fancy Places</string>
     <string name="map">Map</string>
-    <string name="sep_menu_item">Edit</string>
     <string name="sep_update_map_button">Update Location</string>
-    <string name="title_activity_list_fancy_places_map">ListFancyPlacesMap</string>
-    <string name="button_map_mode">Show List</string>
-    <string name="button_list_mode">Show Map</string>
     <string name="updating_location">Updating Location&#8230;</string>
     <string name="your_location">You are here!</string>
-    <string name="edit_fancy_place">Edit Fancy Place</string>
-    <string name="preview_fancy_place">Preview Fancy Place</string>
     <string name="new_fancy_place">New Fancy Place</string>
     <string name="title_activity_show_edit_place">ShowEditPlace</string>
 </resources>

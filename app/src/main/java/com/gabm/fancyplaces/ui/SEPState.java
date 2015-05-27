@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2015 Matthias Gabriel
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.gabm.fancyplaces.ui;
 
 import android.graphics.Bitmap;
@@ -61,8 +78,8 @@ public class SEPState implements Parcelable {
     public class ViewElementVisibility implements Parcelable {
 
         // title
-        public int titleCardVisibility = View.GONE;
         public int titleEditTextVisibility = View.GONE;
+
         // map
         public int mapCardVisibility = View.GONE;
         public int mapVisibility = View.GONE;
@@ -71,17 +88,12 @@ public class SEPState implements Parcelable {
         public int notesCardVisibility = View.GONE;
         public int notesTextViewVisibility = View.GONE;
         public int notesEditTextVisibility = View.GONE;
-        // image
-        public int imageCardVisibility = View.GONE;
 
-        //buttons
-        public int buttonVisibility = View.GONE;
 
         public ViewElementVisibility() {
         }
 
         public ViewElementVisibility(Parcel in) {
-            titleCardVisibility = in.readInt();
             titleEditTextVisibility = in.readInt();
 
             mapCardVisibility = in.readInt();
@@ -91,8 +103,6 @@ public class SEPState implements Parcelable {
             notesCardVisibility = in.readInt();
             notesEditTextVisibility = in.readInt();
             notesTextViewVisibility = in.readInt();
-
-            buttonVisibility = in.readInt();
         }
 
         @Override
@@ -102,7 +112,6 @@ public class SEPState implements Parcelable {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(titleCardVisibility);
             dest.writeInt(titleEditTextVisibility);
 
             dest.writeInt(mapCardVisibility);
@@ -112,10 +121,6 @@ public class SEPState implements Parcelable {
             dest.writeInt(notesCardVisibility);
             dest.writeInt(notesEditTextVisibility);
             dest.writeInt(notesTextViewVisibility);
-
-            dest.writeInt(imageCardVisibility);
-
-            dest.writeInt(buttonVisibility);
 
         }
     }

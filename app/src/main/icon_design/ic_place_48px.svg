@@ -54,7 +54,7 @@
   <path
      d="M24 4c-7.73 0-14 6.27-14 14 0 10.5 14 26 14 26s14-15.5 14-26c0-7.73-6.27-14-14-14zm0 19c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"
      id="path4319"
-     style="fill:#ffc107;fill-opacity:1" />
+     style="fill:#ffc107;fill-opacity:1;stroke:#1b5e20;stroke-opacity:1;stroke-width:2.5;stroke-miterlimit:4;stroke-dasharray:none" />
   <path
      d="M0 0h48v48h-48z"
      fill="none"

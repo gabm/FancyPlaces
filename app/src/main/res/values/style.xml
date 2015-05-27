@@ -3,11 +3,11 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!--   your app branding color for the app bar -->
-        <item name="android:colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimary">@color/ColorPrimary</item>
         <!--   darker variant for the status bar and contextual app bars -->
-        <item name="android:colorPrimaryDark">@color/ColorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
         <!--   theme UI controls like checkboxes and text fields -->
-        <item name="android:colorAccent">@color/ColorAccent</item>
+        <item name="colorAccent">@color/ColorAccent</item>
         <item name="android:windowTranslucentStatus">true</item>
 
     </style>

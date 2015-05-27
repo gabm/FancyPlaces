@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2015 Matthias Gabriel
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.gabm.fancyplaces.ui;
 
 import android.content.Intent;
@@ -8,13 +25,13 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +63,7 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
     private SEPState currentState = new SEPState();
     private LocationHandler locationHandler = null;
     private IMapHandler mapHandler = null;
+    private Menu curMenu = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +76,7 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
         setupFadingToolbar();
 
-        mapHandler = new OsmMapHandler(currentViewElements.mapView);
+        mapHandler = new OsmMapHandler(currentViewElements.mapView, null);
         currentViewElements.mapView.setEnabled(false);
 
         locationHandler = new LocationHandler(this);
@@ -75,10 +93,13 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
     protected void setupFadingToolbar() {
         // inflate toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.sep_toolbar);
+
         final ColorDrawable cd = new ColorDrawable(getResources().getColor(R.color.ColorPrimary));
         cd.setAlpha(0);
         toolbar.setBackground(cd);
-        toolbar.setPadding(0, curAppContext.getStatusBarHeight(), 0, 0);
+        int padding_right = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+
+        toolbar.setPadding(toolbar.getPaddingLeft(), curAppContext.getStatusBarHeight(), padding_right, 0);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -164,20 +185,13 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         // Title
         if (mode == MODE_VIEW) {
             setTitle(data.getTitle());
-            visibility.titleCardVisibility = View.GONE;
-
-        } else if (mode == MODE_EDIT) {
-
-            setTitle(R.string.edit_fancy_place);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+        } else if (mode == MODE_EDIT || mode == MODE_PREVIEW) {
             viewElements.titleEditText.setText(data.getTitle());
-            visibility.titleCardVisibility = View.VISIBLE;
             visibility.titleEditTextVisibility = View.VISIBLE;
-        } else if (mode == MODE_PREVIEW) {
-            setTitle(R.string.preview_fancy_place);
-            viewElements.titleEditText.setText(data.getTitle());
-            visibility.titleCardVisibility = View.VISIBLE;
-            visibility.titleEditTextVisibility = View.VISIBLE;
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
+
 
         ///////////////////////////////////
         // Map
@@ -206,19 +220,9 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
             visibility.notesTextViewVisibility = View.GONE;
             visibility.notesEditTextVisibility = View.VISIBLE;
         }
+
         onNotesChanged();
-
-
         onImageChanged();
-
-        ///////////////////////////////////
-        // Buttons
-        if (mode == MODE_VIEW) {
-            visibility.buttonVisibility = View.GONE;
-        } else if (mode == MODE_EDIT || mode == MODE_PREVIEW) {
-            visibility.buttonVisibility = View.VISIBLE;
-        }
-
         onVisibilitiesChanged();
     }
 
@@ -232,7 +236,6 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         ViewElements viewElements = currentViewElements;
 
         // title
-        viewElements.titleCard.setVisibility(viewElementVisibility.titleCardVisibility);
         viewElements.titleEditText.setVisibility(viewElementVisibility.titleEditTextVisibility);
 
         // map
@@ -243,15 +246,10 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         viewElements.notesCard.setVisibility(viewElementVisibility.notesCardVisibility);
         viewElements.notesTextView.setVisibility(viewElementVisibility.notesTextViewVisibility);
         viewElements.notesEditText.setVisibility(viewElementVisibility.notesEditTextVisibility);
-
-
-        // buttons
-        viewElements.buttons.setVisibility(viewElementVisibility.buttonVisibility);
     }
 
     protected void updateElementIDs() {
         // title
-        currentViewElements.titleCard = (VerticalCardView) findViewById(R.id.sep_title_card);
         currentViewElements.titleEditText = (EditText) findViewById(R.id.sep_title_edit_text);
 
         // map
@@ -267,26 +265,19 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         // image
         currentViewElements.imageView = (ImageView) findViewById(R.id.sep_image);
 
-        // buttons
-        currentViewElements.buttons = (LinearLayout) findViewById(R.id.sep_buttons);
-
         // scrollview
         currentViewElements.scrollView = (ObservableScrollView) findViewById(R.id.sep_scroll_view);
     }
 
-    //TODO: replace with osm
-    /*
-    @Override
-    public void onMapLongClick(LatLng latLng) {
-        if (currentState.mode != MODE_EDIT)
-            return;
-
-        currentState.data.setLocationLat(String.valueOf(latLng.latitude));
-        currentState.data.setLocationLong(String.valueOf(latLng.longitude));
-
-        onLocationChanged(LOCATION_CHANGED_USER);
+    protected void updateMenuItemVisibility() {
+        if (currentState.mode == MODE_VIEW) {
+            curMenu.findItem(R.id.sep_action_edit).setVisible(true);
+            curMenu.findItem(R.id.sep_action_confirm).setVisible(false);
+        } else {
+            curMenu.findItem(R.id.sep_action_edit).setVisible(false);
+            curMenu.findItem(R.id.sep_action_confirm).setVisible(true);
+        }
     }
-    */
 
     protected void setStateFromIntent(Intent intent) {
         Bundle extras = intent.getExtras();
@@ -299,6 +290,11 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_show_edit_place, menu);
+
+        curMenu = menu;
+
+        updateMenuItemVisibility();
+
         return true;
     }
 
@@ -325,13 +321,23 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            if (currentState.mode == MODE_VIEW || currentState.mode == MODE_PREVIEW) {
-                currentState.mode = MODE_EDIT;
-                onActivityModeChanged();
-            }
+        if (id == R.id.sep_action_edit) {
+            currentState.mode = MODE_EDIT;
+
+            onActivityModeChanged();
+            updateMenuItemVisibility();
 
             return true;
+        } else if (id == R.id.sep_action_confirm) {
+            saveInputFieldsToState();
+            if (!currentState.data.isValid())
+                return false;
+
+            currentState.result_code = RESULT_DATA_CHANGED;
+            finish();
+
+            return true;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -357,15 +363,6 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.sep_button_save:
-                saveInputFieldsToState();
-                if (!currentState.data.isValid())
-                    return;
-
-                currentState.result_code = RESULT_DATA_CHANGED;
-                finish();
-                break;
-
             case R.id.sep_image:
                 if (currentState.mode == MODE_VIEW)
                     return;
@@ -423,7 +420,6 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
     protected class ViewElements {
         // title
-        public VerticalCardView titleCard = null;
         public EditText titleEditText = null;
 
         // map
@@ -439,9 +435,6 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
         // image
         public ImageView imageView = null;
-
-        // buttons
-        public LinearLayout buttons = null;
 
         // scroll view
         public ObservableScrollView scrollView = null;

@@ -12,7 +12,15 @@
         android:layout_height="wrap_content"
         android:background="@color/ColorPrimary"
         android:elevation="16dp"
-        android:minHeight="?attr/actionBarSize" />
+        android:minHeight="?attr/actionBarSize">
+
+        <EditText
+            android:id="@+id/sep_title_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone" />
+    </android.support.v7.widget.Toolbar>
 
     <com.gabm.fancyplaces.ui.ObservableScrollView
         android:id="@+id/sep_scroll_view"
@@ -42,20 +50,6 @@
                 android:fitsSystemWindows="true"
                 android:orientation="vertical">
 
-                <com.gabm.fancyplaces.ui.VerticalCardView
-                    android:id="@+id/sep_title_card"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    own:card_title="@string/title">
-
-                    <EditText
-                        android:id="@+id/sep_title_edit_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:singleLine="true" />
-                </com.gabm.fancyplaces.ui.VerticalCardView>
 
                 <com.gabm.fancyplaces.ui.VerticalCardView
                     android:id="@+id/sep_map_card"
@@ -103,25 +97,6 @@
                         android:layout_gravity="center_horizontal"
                         android:gravity="top" />
                 </com.gabm.fancyplaces.ui.VerticalCardView>
-
-
-                <LinearLayout
-                    android:id="@+id/sep_buttons"
-                    android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/sep_button_save"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:clickable="true"
-                        android:onClick="onClick"
-                        android:text="@string/save_fancy_place" />
-
-                </LinearLayout>
         </LinearLayout>
         </LinearLayout>
     </com.gabm.fancyplaces.ui.ObservableScrollView>

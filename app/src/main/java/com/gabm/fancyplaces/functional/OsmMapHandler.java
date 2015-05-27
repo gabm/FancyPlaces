@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2015 Matthias Gabriel
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.gabm.fancyplaces.functional;
 
 import android.database.DataSetObserver;
@@ -15,15 +32,17 @@ import org.osmdroid.views.MapView;
 /**
  * Created by gabm on 24/05/15.
  */
-public class OsmMapHandler extends DataSetObserver implements IMapHandler {
+public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMarker.IMarkerSelected {
 
     private IMapController curMapController = null;
     private MapView curMapView = null;
     private ArrayAdapter<FancyPlace> adapter = null;
+    private OnFancyPlaceSelectedListener fancyPlaceSelectedCallback = null;
 
-    public OsmMapHandler(MapView mapView) {
+    public OsmMapHandler(MapView mapView, OnFancyPlaceSelectedListener listener) {
         curMapView = mapView;
         curMapController = mapView.getController();
+        fancyPlaceSelectedCallback = listener;
     }
 
     @Override
@@ -49,30 +68,47 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler {
 
     @Override
     public void clearMarkers() {
+        for (int i = 0; i < curMapView.getOverlays().size(); i++) {
+            OsmMarker marker = (OsmMarker) curMapView.getOverlays().get(i);
+            if (marker != null) {
+                marker.setInfoWindowVisible(false);
+            }
+        }
         curMapView.getOverlays().clear();
+
+    }
+
+    protected OsmMarker createMarker(GeoPoint pt, String text, boolean showInfoWindow, int id, int drawableID) {
+        OsmMarker marker = new OsmMarker(curMapView.getContext(), curMapView);
+
+        marker.setPosition(pt);
+        marker.setIcon(curMapView.getContext().getDrawable(drawableID));
+        marker.setAnchor(OsmMarker.ANCHOR_CENTER, OsmMarker.ANCHOR_BOTTOM);
+        marker.setTitle(text);
+        marker.setId(id);
+        marker.setInfoWindowVisible(showInfoWindow);
+        marker.setMarkerSelectedListener(this);
+
+        return marker;
 
     }
 
     @Override
     public void addMarker(double lat, double lng, String text, boolean showInfoWindow) {
-        OsmMarker marker = new OsmMarker(curMapView.getContext(), curMapView);
-
         GeoPoint pt = new GeoPoint(lat, lng);
-        marker.setPosition(pt);
-        marker.setIcon(curMapView.getContext().getDrawable(R.drawable.ic_pin));
-        marker.setAnchor(OsmMarker.ANCHOR_CENTER, OsmMarker.ANCHOR_BOTTOM);
-        marker.setTitle(text);
 
-        if (showInfoWindow)
-            marker.toogleInfoWindow();
+        addMarker(createMarker(pt, text, showInfoWindow, -1, R.drawable.ic_pin));
+    }
 
+    protected void addMarker(OsmMarker marker) {
         curMapView.getOverlays().add(marker);
         curMapView.invalidate();
     }
 
     @Override
     public void setCurrentLocationMarker(double lat, double lng, String title) {
-
+        OsmMarker marker = createMarker(new GeoPoint(lat, lng), title, false, -1, R.drawable.ic_my_location);
+        addMarker(marker);
     }
 
     @Override
@@ -91,9 +127,9 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler {
         clearMarkers();
         for (int i = 0; i < adapter.getCount(); i++) {
             FancyPlace fp = adapter.getItem(i);
-            addMarker(Double.valueOf(fp.getLocationLat()),
-                    Double.valueOf(fp.getLocationLong()),
-                    fp.getTitle(), false);
+
+            GeoPoint pt = new GeoPoint(Double.valueOf(fp.getLocationLat()), Double.valueOf(fp.getLocationLong()));
+            addMarker(createMarker(pt, fp.getTitle(), false, i, R.drawable.ic_pin));
         }
     }
 
@@ -105,4 +141,9 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler {
         updateMarkersFromDataSource();
     }
 
+    @Override
+    public void onMarkerSelected(int id) {
+        if (fancyPlaceSelectedCallback != null)
+            fancyPlaceSelectedCallback.onFancyPlaceSelected(id, OnFancyPlaceSelectedListener.INTENT_VIEW);
+    }
 }
