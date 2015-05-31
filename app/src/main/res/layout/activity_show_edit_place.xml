@@ -6,21 +6,7 @@
     android:orientation="vertical"
     tools:context="com.gabm.fancyplaces.ui.ShowEditPlace">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/sep_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/ColorPrimary"
-        android:elevation="16dp"
-        android:minHeight="?attr/actionBarSize">
 
-        <EditText
-            android:id="@+id/sep_title_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone" />
-    </android.support.v7.widget.Toolbar>
 
     <com.gabm.fancyplaces.ui.ObservableScrollView
         android:id="@+id/sep_scroll_view"
@@ -100,5 +86,21 @@
         </LinearLayout>
         </LinearLayout>
     </com.gabm.fancyplaces.ui.ObservableScrollView>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/sep_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ColorPrimary"
+        android:elevation="16dp"
+        android:minHeight="?attr/actionBarSize">
+
+        <EditText
+            android:id="@+id/sep_title_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone" />
+    </android.support.v7.widget.Toolbar>
 
 </FrameLayout>

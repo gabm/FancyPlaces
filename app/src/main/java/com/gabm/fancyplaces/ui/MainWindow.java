@@ -20,6 +20,7 @@ package com.gabm.fancyplaces.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
@@ -68,7 +69,8 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         // inflate toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_window_toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setPadding(0, curAppContext.getStatusBarHeight(), 0, 0);
+        if (Build.VERSION.SDK_INT >= 19)
+            toolbar.setPadding(0, curAppContext.getStatusBarHeight(), 0, 0);
 
         // store data
         fancyPlacesDatabase = new FancyPlacesDatabase(getApplicationContext());
