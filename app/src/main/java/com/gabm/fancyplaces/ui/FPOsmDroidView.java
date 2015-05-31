@@ -18,6 +18,7 @@
 package com.gabm.fancyplaces.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -55,8 +56,9 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
     }
 
     @Override
-    public String getTitle() {
-        return "OSM View";
+    public String getTitle(Context context) {
+
+        return context.getString(R.string.fp_map_view_title);
     }
 
     @Override

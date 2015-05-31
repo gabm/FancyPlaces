@@ -18,6 +18,7 @@
 package com.gabm.fancyplaces.functional;
 
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -35,12 +36,14 @@ import java.util.List;
 public class MainWindowViewpagerAdapter extends FragmentStatePagerAdapter {
 
     private List<TabItem> tabItemList = new ArrayList<>();
+    private Context curContext = null;
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
-    public MainWindowViewpagerAdapter(FragmentManager fm, List<TabItem> newTabItemList) {
+    public MainWindowViewpagerAdapter(Context context, FragmentManager fm, List<TabItem> newTabItemList) {
         super(fm);
 
         tabItemList = newTabItemList;
+        curContext = context;
 
     }
 
@@ -54,7 +57,7 @@ public class MainWindowViewpagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return tabItemList.get(position).getTitle();
+        return tabItemList.get(position).getTitle(curContext);
     }
 
     // This method return the Number of tabs for the tabs Strip

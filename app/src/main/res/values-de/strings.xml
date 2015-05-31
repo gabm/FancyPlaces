@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2015 Matthias Gabriel
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="context_menu_delete">Löschen</string>
+    <string name="context_menu_share">Teilen</string>
+    <string name="map">Karte</string>
+    <string name="new_fancy_place">Neuer Fancy Place</string>
+    <string name="notes">Notizen</string>
+    <string name="sep_update_map_button">Standort Aktualisieren</string>
+    <string name="title_activity_show_edit_place">ShowEditPlace</string>
+    <string name="updating_location">Standort wird aktualisiert&#8230;</string>
+    <string name="your_location">Sie sind hier!</string>
+    <string name="fp_list_view_title">Liste</string>
+    <string name="fp_map_view_title">Karte</string>
+</resources>

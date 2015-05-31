@@ -82,7 +82,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         ImageFile.curAppContext = curAppContext;
 
         // viewpager
-        viewpagerAdapter = new MainWindowViewpagerAdapter(getSupportFragmentManager(), createTabList());
+        viewpagerAdapter = new MainWindowViewpagerAdapter(getApplicationContext(), getSupportFragmentManager(), createTabList());
         pager = (ViewPager) findViewById(R.id.main_window_viewpager);
         pager.setAdapter(viewpagerAdapter);
 

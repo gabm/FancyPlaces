@@ -18,6 +18,7 @@
 package com.gabm.fancyplaces.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.ContextMenu;
@@ -43,11 +44,13 @@ public class FPListView extends TabItem {
     private MainWindow parent = null;
 
 
+
     public static FPListView newInstance() {
         FPListView result = new FPListView();
 
         return result;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,8 +98,8 @@ public class FPListView extends TabItem {
     }
 
     @Override
-    public String getTitle() {
-        return "List";
+    public String getTitle(Context context) {
+        return context.getString(R.string.fp_list_view_title);
     }
 
     @Override
