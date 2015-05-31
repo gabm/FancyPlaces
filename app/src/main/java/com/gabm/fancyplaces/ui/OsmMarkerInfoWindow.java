@@ -98,7 +98,7 @@ public class OsmMarkerInfoWindow {
 
     public static ArrayList<OsmMarkerInfoWindow> getOpenedInfoWindowsOn(MapView mapView) {
         int count = mapView.getChildCount();
-        ArrayList opened = new ArrayList(count);
+        ArrayList<OsmMarkerInfoWindow> opened = new ArrayList<>(count);
 
         for(int i = 0; i < count; ++i) {
             View child = mapView.getChildAt(i);
