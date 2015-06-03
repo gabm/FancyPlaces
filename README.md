@@ -13,7 +13,7 @@ There are several ways of obtaining **FancyPlaces**:
 I would appreciate any feedback or contributions. Feel free to fork the code or file issues as well as feature request or ideas. Also translations are greatly appreciated.
 
 ### Translations
-I'm always seeking for new translations. If you feel that one of your languages should be added, please contribute to the [Crowdin Project](https://f-droid.org/repository/browse/?fdcategory=Navigation&fdid=com.gabm.fancyplaces)
+I'm always seeking for new translations. If you feel that one of your languages should be added, please contribute to the [Crowdin Project](https://crowdin.com/project/fancyplaces)
 
 ## License
 This program is licensed under GPLv3 and the whole source code is available on github.
