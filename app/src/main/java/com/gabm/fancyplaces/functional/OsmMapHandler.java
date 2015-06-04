@@ -82,7 +82,7 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
         OsmMarker marker = new OsmMarker(curMapView.getContext(), curMapView);
 
         marker.setPosition(pt);
-        marker.setIcon(curMapView.getContext().getDrawable(drawableID));
+        marker.setIcon(curMapView.getContext().getResources().getDrawable(drawableID));
         marker.setAnchor(OsmMarker.ANCHOR_CENTER, OsmMarker.ANCHOR_BOTTOM);
         marker.setTitle(text);
         marker.setId(id);
