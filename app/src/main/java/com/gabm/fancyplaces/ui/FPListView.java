@@ -109,7 +109,7 @@ public class FPListView extends TabItem {
 
         menu.setHeaderTitle(parent.fancyPlaceArrayAdapter.getItem(info.position).getTitle());
 
-        String[] menuItems = {getString(R.string.context_menu_delete), getString(R.string.context_menu_share)};
+        String[] menuItems = {getString(R.string.context_menu_delete)/*, getString(R.string.context_menu_share)*/};
 
         for (int i = 0; i < menuItems.length; i++) {
             menu.add(Menu.NONE, i, i, menuItems[i]);

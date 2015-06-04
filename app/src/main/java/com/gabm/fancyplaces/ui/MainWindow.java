@@ -19,7 +19,6 @@ package com.gabm.fancyplaces.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -101,11 +100,13 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
+        // handle sharing data
+        /*
         Uri uri = getIntent().getData();
         if (uri != null) {
             FancyPlace fp = FancyPlace.loadFromFile(getContentResolver(), uri);
             showSEPActivityForResult(getApplicationContext(), fp, ShowEditPlace.MODE_PREVIEW);
-        }
+        }*/
     }
 
     private List<TabItem> createTabList() {
@@ -135,6 +136,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 fancyPlacesDatabase.deleteFancyPlace(fp, true);
                 break;
             case OnFancyPlaceSelectedListener.INTENT_SHARE:
+                /*
                 try {
                     String fileName = fp.saveToFile(getApplicationContext().getExternalCacheDir().getAbsolutePath());
 
@@ -147,7 +149,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                     startActivity(Intent.createChooser(sharingIntent, "Share FancyPlace using"));
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
+                }*/
                 break;
             case OnFancyPlaceSelectedListener.INTENT_CREATE_NEW:
                 showSEPActivityForResult(getApplicationContext(), new FancyPlace(), ShowEditPlace.MODE_EDIT);
