@@ -9,6 +9,7 @@
     <string name="map">Map</string>
     <string name="sep_update_map_button">Update Location</string>
     <string name="updating_location">Updating Location&#8230;</string>
+    <string name="error_saving">Error saving, check if you provided a valid Title and Location!</string>
     <string name="your_location">You are here!</string>
     <string name="new_fancy_place">New Fancy Place</string>
     <string name="title_activity_show_edit_place">ShowEditPlace</string>

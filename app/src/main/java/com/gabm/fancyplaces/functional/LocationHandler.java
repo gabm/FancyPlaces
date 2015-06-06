@@ -38,7 +38,7 @@ public class LocationHandler implements LocationListener {
     private static final int TEN_MINUTES = 1000 * 60 * 10;
     private static final int THIRTY_SECONDS = 1000 * 30;
     private static final float MIN_ACCURACY = 500;
-    private static Location curLocation = null;
+    private Location curLocation = null;
     List<String> locationProviders = null;
     private Boolean searchingForLocation = false;
     private android.location.LocationManager locationManager = null;
@@ -46,11 +46,13 @@ public class LocationHandler implements LocationListener {
     private Timer timeoutTimer = null;
     private Activity parentActivity = null;
 
-    public LocationHandler(Activity activity) {
+    public LocationHandler(Activity activity, OnLocationUpdatedListener locationListener) {
         parentActivity = activity;
         locationManager = (android.location.LocationManager) parentActivity.getSystemService(Context.LOCATION_SERVICE);
 
         locationProviders = locationManager.getProviders(true);
+
+        onLocationUpdatedListener = locationListener;
 
         initLocation();
     }
@@ -90,7 +92,7 @@ public class LocationHandler implements LocationListener {
         Time now = new Time();
         now.setToNow();
 
-        return now.toMillis(true) - location.getTime() <= TEN_MINUTES;
+        return (now.toMillis(true) - location.getTime()) <= TEN_MINUTES;
 
     }
 

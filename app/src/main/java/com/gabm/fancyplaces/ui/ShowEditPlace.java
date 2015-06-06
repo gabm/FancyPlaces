@@ -80,8 +80,7 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         mapHandler = new OsmMapHandler(currentViewElements.mapView, null);
         currentViewElements.mapView.setEnabled(false);
 
-        locationHandler = new LocationHandler(this);
-        locationHandler.setOnLocationUpdatedListener(this);
+        locationHandler = new LocationHandler(this, this);
 
         currentState.result_code = RESULT_DATA_NOT_CHANGED;
 
@@ -333,7 +332,11 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         } else if (id == R.id.sep_action_confirm) {
             saveInputFieldsToState();
             if (!currentState.data.isValid())
+            {
+                Toast.makeText(this, R.string.error_saving, Toast.LENGTH_SHORT).show();
+
                 return false;
+            }
 
             currentState.result_code = RESULT_DATA_CHANGED;
             finish();
