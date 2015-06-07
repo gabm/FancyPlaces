@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.R;
 import com.gabm.fancyplaces.functional.LocationHandler;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
@@ -45,9 +46,9 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
     private ResourceProxy mResourceProxy = null;
     private OsmMapViewScrollWorkaround mMapView = null;
     private OsmMapHandler mapHandler = null;
-    private LocationHandler locationHandler = null;
     private OnFancyPlaceSelectedListener fancyPlaceSelectedCallback = null;
     private MainWindow parent = null;
+    private LocationHandler locationHandler = null;
 
     public static FPOsmDroidView newInstance() {
         FPOsmDroidView result = new FPOsmDroidView();
@@ -64,6 +65,18 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
     @Override
     public void onLocationUpdated(Location location) {
         onLocationUpdated(location, LOCATION_UPDATED_GPS);
+    }
+
+    @Override
+    public void onLocationUpdating() {
+        getActivity().runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), R.string.updating_location, Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     public void onLocationUpdated(Location location, int reason) {
@@ -92,25 +105,20 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
         mapHandler = new OsmMapHandler(mMapView, fancyPlaceSelectedCallback);
         mapHandler.setAdapter(parent.fancyPlaceArrayAdapter);
 
-        locationHandler = new LocationHandler(getActivity(), this);
-        onLocationUpdated(locationHandler.getCurLocation(), LOCATION_UPDATED_INIT);
-        requestLocationUpdate();
+
+        locationHandler = ((FancyPlacesApplication) parent.getApplicationContext()).getLocationHandler();
+        locationHandler.addOnLocationUpdatedListener(this);
+        locationHandler.updateLocation(false);
 
         return mMapView;
     }
 
-    private void requestLocationUpdate() {
-        if (locationHandler.requireNewLocationUpdate()) {
-            locationHandler.updateLocation();
-            getActivity().runOnUiThread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getActivity(), R.string.updating_location, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
-        }
+
+    @Override
+    public void onDestroyView() {
+        locationHandler.removeOnLocationUpdatedListener(this);
+        super.onDestroyView();
+
     }
 
     @Override
@@ -124,4 +132,5 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
 
         }
     }
+
 }

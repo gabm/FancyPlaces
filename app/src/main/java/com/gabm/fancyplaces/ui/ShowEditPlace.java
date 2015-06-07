@@ -80,14 +80,24 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         mapHandler = new OsmMapHandler(currentViewElements.mapView, null);
         currentViewElements.mapView.setEnabled(false);
 
-        locationHandler = new LocationHandler(this, this);
-
         currentState.result_code = RESULT_DATA_NOT_CHANGED;
 
-        if (savedInstanceState == null) {
+        // if no saved instance, initialize with intent
+        if (savedInstanceState == null)
             setStateFromIntent(getIntent());
+
+        locationHandler = ((FancyPlacesApplication) getApplicationContext()).getLocationHandler();
+        locationHandler.addOnLocationUpdatedListener(this);
+
+        // if initialized from intent, update ui
+        if (savedInstanceState == null)
             onActivityModeChanged();
-        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        locationHandler.removeOnLocationUpdatedListener(this);
     }
 
     protected void setupFadingToolbar() {
@@ -200,7 +210,7 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         if (data.isLocationSet()) {
             onLocationChanged(LOCATION_CHANGED_INIT);
         } else if (!data.isLocationSet() && mode == MODE_EDIT) {
-            requestLocationUpdate();
+            locationHandler.updateLocation(false);
         }
 
         if (mode == MODE_EDIT || mode == MODE_PREVIEW) {
@@ -225,11 +235,6 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         onNotesChanged();
         onImageChanged();
         onVisibilitiesChanged();
-    }
-
-    protected void requestLocationUpdate() {
-        locationHandler.updateLocation();
-        Toast.makeText(this, R.string.updating_location, Toast.LENGTH_SHORT).show();
     }
 
     protected void onVisibilitiesChanged() {
@@ -281,6 +286,9 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
     }
 
     protected void setStateFromIntent(Intent intent) {
+        if (intent == null)
+            return;
+
         Bundle extras = intent.getExtras();
         currentState.mode = extras.getInt("mode");
         currentState.data = extras.getParcelable("data");
@@ -303,7 +311,6 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
     protected void onSaveInstanceState(Bundle bundle) {
         saveInputFieldsToState();
         bundle.putParcelable("state", currentState);
-        locationHandler.onSaveInstanceState(bundle);
         super.onSaveInstanceState(bundle);
     }
 
@@ -311,7 +318,6 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
     protected void onRestoreInstanceState(Bundle bundle) {
         currentState = bundle.getParcelable("state");
         onActivityModeChanged();
-        locationHandler.onRestoreInstanceState(bundle);
         super.onRestoreInstanceState(bundle);
     }
 
@@ -381,7 +387,7 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
                 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                 break;
             case R.id.sep_map_update_button:
-                requestLocationUpdate();
+                locationHandler.updateLocation(true);
                 break;
         }
     }
@@ -397,24 +403,21 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
     }
 
     @Override
-    public void onResume() {
-        locationHandler.onResume();
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        locationHandler.onPause();
-
-        super.onPause();
-    }
-
-    @Override
     public void onLocationUpdated(Location location) {
-        currentState.data.setLocationLat(String.valueOf(location.getLatitude()));
-        currentState.data.setLocationLong(String.valueOf(location.getLongitude()));
 
-        onLocationChanged(LOCATION_CHANGED_GPS);
+        // state can be null if called before restore!
+        if (currentState.data != null) {
+            currentState.data.setLocationLat(String.valueOf(location.getLatitude()));
+            currentState.data.setLocationLong(String.valueOf(location.getLongitude()));
+
+            onLocationChanged(LOCATION_CHANGED_GPS);
+            onLocationChanged(LOCATION_CHANGED_GPS);
+        }
+    }
+
+    @Override
+    public void onLocationUpdating() {
+        Toast.makeText(this, R.string.updating_location, Toast.LENGTH_SHORT).show();
     }
 
     protected void setMarker(double lat, double lng, String title) {

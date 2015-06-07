@@ -18,6 +18,12 @@
 package com.gabm.fancyplaces;
 
 import android.app.Application;
+import android.content.Context;
+import android.location.LocationManager;
+
+import com.gabm.fancyplaces.functional.LocationHandler;
+
+import java.io.File;
 
 /**
  * Created by gabm on 19/05/15.
@@ -29,6 +35,19 @@ public class FancyPlacesApplication extends Application {
     static public final int MAP_DEFAULT_ZOOM_FAR = 13;
     static public final int MAP_DEFAULT_DURATION = 3000;
     public static String TMP_IMAGE_FULL_PATH = "";
+    private static LocationHandler locationHandler = null;
+
+    @Override
+    public void onCreate() {
+        locationHandler = new LocationHandler((LocationManager) getSystemService(Context.LOCATION_SERVICE));
+        TMP_IMAGE_FULL_PATH = getExternalCacheDir() + File.separator + com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FILENAME;
+        registerActivityLifecycleCallbacks(locationHandler);
+
+    }
+
+    public LocationHandler getLocationHandler() {
+        return locationHandler;
+    }
 
     public int getStatusBarHeight() {
         int result = 0;

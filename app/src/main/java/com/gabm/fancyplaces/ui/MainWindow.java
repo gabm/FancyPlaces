@@ -77,7 +77,6 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         fancyPlaces = (ArrayList<FancyPlace>) fancyPlacesDatabase.getAllFancyPlaces();
         fancyPlaceArrayAdapter = new FancyPlaceListViewAdapter(getApplicationContext(), R.layout.list_item_fancy_place, fancyPlaces);
 
-        com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FULL_PATH = curAppContext.getExternalCacheDir() + File.separator + com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FILENAME;
         ImageFile.curAppContext = curAppContext;
 
         // viewpager

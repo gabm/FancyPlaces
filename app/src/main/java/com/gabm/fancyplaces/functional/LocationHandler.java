@@ -18,13 +18,14 @@
 package com.gabm.fancyplaces.functional;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.Application;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.format.Time;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,72 +33,181 @@ import java.util.TimerTask;
 /**
  * Created by gabm on 29.12.14.
  */
-public class LocationHandler implements LocationListener {
+public class LocationHandler implements LocationListener, Application.ActivityLifecycleCallbacks {
 
+    private static final int ONE_MINUTE = 1000 * 60;
     private static final int TWO_MINUTES = 1000 * 60 * 2;
-    private static final int TEN_MINUTES = 1000 * 60 * 10;
-    private static final int THIRTY_SECONDS = 1000 * 30;
-    private static final float MIN_ACCURACY = 500;
-    private Location curLocation = null;
     List<String> locationProviders = null;
+    private Location curLocation = null;
     private Boolean searchingForLocation = false;
-    private android.location.LocationManager locationManager = null;
-    private OnLocationUpdatedListener onLocationUpdatedListener = null;
+    private android.location.LocationManager curLocationManager = null;
+    private List<OnLocationUpdatedListener> onLocationUpdatedListeners = new ArrayList<>();
     private Timer timeoutTimer = null;
-    private Activity parentActivity = null;
 
-    public LocationHandler(Activity activity, OnLocationUpdatedListener locationListener) {
-        parentActivity = activity;
-        locationManager = (android.location.LocationManager) parentActivity.getSystemService(Context.LOCATION_SERVICE);
-
+    public LocationHandler(android.location.LocationManager locationManager) {
+        curLocationManager = locationManager;
         locationProviders = locationManager.getProviders(true);
-
-        onLocationUpdatedListener = locationListener;
 
         initLocation();
     }
 
-    public Location getCurLocation() {
-        return curLocation;
-    }
-
-    public void updateLocation() {
-        startLocationUpdate();
+    public void updateLocation(boolean force) {
+        if (!isValidLocation(curLocation) || force)
+            startLocationUpdate();
+        else
+            notifyLocationUpdated();
     }
 
     protected void initLocation() {
-        Location netLoc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        Location gpsLoc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-        Boolean initializedLoc = false;
+        Location netLoc = curLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Location gpsLoc = curLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         if (isValidLocation(netLoc)) {
             curLocation = netLoc;
-            initializedLoc = true;
         }
 
         if (isValidLocation(gpsLoc)) {
             curLocation = gpsLoc;
-            initializedLoc = true;
+        }
+    }
+
+    public void addOnLocationUpdatedListener(OnLocationUpdatedListener locationUpdatedListener) {
+        onLocationUpdatedListeners.add(locationUpdatedListener);
+
+        if (isValidLocation(curLocation))
+            locationUpdatedListener.onLocationUpdated(curLocation);
+    }
+
+    public void removeOnLocationUpdatedListener(OnLocationUpdatedListener locationUpdatedListener) {
+        onLocationUpdatedListeners.remove(locationUpdatedListener);
+    }
+
+    protected void notifyLocationUpdating() {
+        for (int i = 0; i < onLocationUpdatedListeners.size(); i++)
+            onLocationUpdatedListeners.get(i).onLocationUpdating();
+    }
+
+    protected void notifyLocationUpdated() {
+        for (int i = 0; i < onLocationUpdatedListeners.size(); i++)
+            onLocationUpdatedListeners.get(i).onLocationUpdated(curLocation);
+    }
+
+
+    /**
+     * Checks whether two providers are the same
+     */
+    private boolean isSameProvider(String provider1, String provider2) {
+        if (provider1 == null) {
+            return provider2 == null;
+        }
+        return provider1.equals(provider2);
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        if (isBetterLocation(location, curLocation)) {
+            curLocation = location;
+
+            notifyLocationUpdated();
         }
 
-        if (initializedLoc)
-            onLocationChanged(curLocation);
+        if (isValidLocation(curLocation))
+            stopLocationUpdate();
     }
 
-    protected Boolean isValidLocation(Location location) {
-        if (location == null)
-            return false;
-
-        Time now = new Time();
-        now.setToNow();
-
-        return (now.toMillis(true) - location.getTime()) <= TEN_MINUTES;
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
 
-    public void setOnLocationUpdatedListener(OnLocationUpdatedListener locationUpdatedListener) {
-        onLocationUpdatedListener = locationUpdatedListener;
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+    }
+
+    private void startLocationUpdate() {
+        if (locationProviders.isEmpty())
+            return;
+
+        notifyLocationUpdating();
+
+        // search for new location
+        for (int i = 0; i < locationProviders.size(); i++)
+            curLocationManager.requestLocationUpdates(locationProviders.get(i), 0, 0, LocationHandler.this);
+
+        // start timeout
+        timeoutTimer = new Timer();
+        timeoutTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                stopLocationUpdate();
+            }
+        }, ONE_MINUTE);
+
+        searchingForLocation = true;
+    }
+
+    private void stopLocationUpdate() {
+        curLocationManager.removeUpdates(this);
+        searchingForLocation = false;
+        stopTimer();
+    }
+
+    private void stopTimer() {
+        if (timeoutTimer == null)
+            return;
+
+        timeoutTimer.cancel();
+        timeoutTimer.purge();
+        timeoutTimer = null;
+    }
+
+
+    @Override
+    public void onActivityCreated(Activity activity, Bundle bundle) {
+        if (bundle != null)
+            searchingForLocation = bundle.getBoolean("searchingForLocation");
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+        if (searchingForLocation)
+            startLocationUpdate();
+    }
+
+    @Override
+    public void onActivityPaused(Activity activity) {
+        Boolean stillSearching = searchingForLocation;
+
+        stopLocationUpdate();
+
+        searchingForLocation = stillSearching;
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
+        bundle.putBoolean("searchingForLocation", searchingForLocation);
+    }
+
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+
     }
 
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {
@@ -108,8 +218,8 @@ public class LocationHandler implements LocationListener {
 
         // Check whether the new location fix is newer or older
         long timeDelta = location.getTime() - currentBestLocation.getTime();
-        boolean isSignificantlyNewer = timeDelta > TWO_MINUTES;
-        boolean isSignificantlyOlder = timeDelta < -TWO_MINUTES;
+        boolean isSignificantlyNewer = timeDelta > ONE_MINUTE;
+        boolean isSignificantlyOlder = timeDelta < -ONE_MINUTE;
         boolean isNewer = timeDelta > 0;
 
         // If it's been more than two minutes since the current location, use the new location
@@ -142,127 +252,21 @@ public class LocationHandler implements LocationListener {
         return false;
     }
 
-    public Boolean requireNewLocationUpdate() {
-        if (curLocation != null) {
-            Time now = new Time();
-            now.setToNow();
-            if (now.toMillis(true) - curLocation.getTime() > TWO_MINUTES)
-                return true;
 
-            if (curLocation.getAccuracy() > MIN_ACCURACY)
-                return true;
-        } else {
-            return true;
-        }
+    protected Boolean isValidLocation(Location location) {
+        if (location == null)
+            return false;
 
-        return false;
-    }
+        Time now = new Time();
+        now.setToNow();
 
-    /**
-     * Checks whether two providers are the same
-     */
-    private boolean isSameProvider(String provider1, String provider2) {
-        if (provider1 == null) {
-            return provider2 == null;
-        }
-        return provider1.equals(provider2);
+        return (now.toMillis(true) - location.getTime()) <= TWO_MINUTES;
 
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        if (isBetterLocation(location, curLocation)) {
-            curLocation = location;
-            if (onLocationUpdatedListener != null)
-                onLocationUpdatedListener.onLocationUpdated(curLocation);
-        }
-
-        if (isValidLocation(curLocation))
-            stopLocationUpdate();
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-    }
-
-    private void startLocationUpdate() {
-        if (locationProviders.isEmpty())
-            return;
-
-        // search for new location
-        requestLocationUpdateOnUiThread();
-
-        // start timeout
-        timeoutTimer = new Timer();
-        timeoutTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                stopLocationUpdate();
-            }
-        }, TWO_MINUTES);
-
-        searchingForLocation = true;
-    }
-
-    private void requestLocationUpdateOnUiThread() {
-        parentActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < locationProviders.size(); i++)
-                    locationManager.requestLocationUpdates(locationProviders.get(i), 0, 0, LocationHandler.this);
-
-            }
-        });
-    }
-
-    private void stopLocationUpdate() {
-        locationManager.removeUpdates(this);
-        searchingForLocation = false;
-        stopTimer();
-    }
-
-    private void stopTimer() {
-        if (timeoutTimer == null)
-            return;
-
-        timeoutTimer.cancel();
-        timeoutTimer.purge();
-        timeoutTimer = null;
-    }
-
-    public void onResume() {
-        if (searchingForLocation)
-            startLocationUpdate();
-    }
-
-    public void onPause() {
-        Boolean stillSearching = searchingForLocation;
-
-        stopLocationUpdate();
-
-        searchingForLocation = stillSearching;
-    }
-
-    public void onSaveInstanceState(Bundle bundle) {
-        bundle.putBoolean("searchingForLocation", searchingForLocation);
-    }
-
-    public void onRestoreInstanceState(Bundle bundle) {
-        searchingForLocation = bundle.getBoolean("searchingForLocation");
     }
 
     public interface OnLocationUpdatedListener {
         void onLocationUpdated(Location location);
+
+        void onLocationUpdating();
     }
 }
