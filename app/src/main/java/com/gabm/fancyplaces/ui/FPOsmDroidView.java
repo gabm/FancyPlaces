@@ -31,17 +31,15 @@ import com.gabm.fancyplaces.R;
 import com.gabm.fancyplaces.functional.LocationHandler;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 import com.gabm.fancyplaces.functional.OsmMapHandler;
+import com.melnykov.fab.FloatingActionButton;
 
-import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.ResourceProxyImpl;
 
 /**
  * Created by gabm on 23/05/15.
  */
 public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocationUpdatedListener {
 
-    private ResourceProxy mResourceProxy = null;
     private OsmMapViewScrollWorkaround mMapView = null;
     private OsmMapHandler mapHandler = null;
     private OnFancyPlaceSelectedListener fancyPlaceSelectedCallback = null;
@@ -80,9 +78,9 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mResourceProxy = new ResourceProxyImpl(inflater.getContext().getApplicationContext());
+        View v = inflater.inflate(R.layout.fancy_places_osmview, container, false);
 
-        mMapView = new OsmMapViewScrollWorkaround(inflater.getContext(), 128, mResourceProxy);
+        mMapView = (OsmMapViewScrollWorkaround) v.findViewById(R.id.fp_map_view);
         mMapView.setTileSource(TileSourceFactory.MAPQUESTOSM);
         mMapView.setMultiTouchControls(true);
         mMapView.setTilesScaledToDpi(true);
@@ -91,12 +89,21 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
         mapHandler = new OsmMapHandler(mMapView, fancyPlaceSelectedCallback);
         mapHandler.setAdapter(parent.fancyPlaceArrayAdapter);
 
-
         locationHandler = ((FancyPlacesApplication) parent.getApplicationContext()).getLocationHandler();
         locationHandler.addOnLocationUpdatedListener(this);
         locationHandler.updateLocation(false);
 
-        return mMapView;
+        // add fab callback
+        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fp_map_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fancyPlaceSelectedCallback.onFancyPlaceSelected(0, OnFancyPlaceSelectedListener.INTENT_CREATE_NEW);
+            }
+        });
+
+
+        return v;
     }
 
 
@@ -115,7 +122,7 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
             fancyPlaceSelectedCallback = (MainWindow) activity;
             parent = (MainWindow) activity;
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

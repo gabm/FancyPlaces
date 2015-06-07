@@ -78,7 +78,7 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
 
     }
 
-    protected OsmMarker createMarker(GeoPoint pt, String text, boolean showInfoWindow, int id, int drawableID) {
+    protected OsmMarker createMarker(GeoPoint pt, String text, boolean showInfoWindow, int id, int drawableID, boolean setListener) {
         OsmMarker marker = new OsmMarker(curMapView.getContext(), curMapView);
 
         marker.setPosition(pt);
@@ -87,7 +87,9 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
         marker.setTitle(text);
         marker.setId(id);
         marker.setInfoWindowVisible(showInfoWindow);
-        marker.setMarkerSelectedListener(this);
+
+        if (setListener)
+            marker.setMarkerSelectedListener(this);
 
         return marker;
 
@@ -97,7 +99,7 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
     public void addMarker(double lat, double lng, String text, boolean showInfoWindow) {
         GeoPoint pt = new GeoPoint(lat, lng);
 
-        addMarker(createMarker(pt, text, showInfoWindow, -1, R.drawable.ic_pin));
+        addMarker(createMarker(pt, text, showInfoWindow, -1, R.drawable.ic_pin, true));
     }
 
     protected void addMarker(OsmMarker marker) {
@@ -107,7 +109,7 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
 
     @Override
     public void setCurrentLocationMarker(double lat, double lng, String title) {
-        OsmMarker marker = createMarker(new GeoPoint(lat, lng), title, false, -1, R.drawable.ic_my_location);
+        OsmMarker marker = createMarker(new GeoPoint(lat, lng), title, false, -1, R.drawable.ic_my_location, false);
         addMarker(marker);
     }
 
@@ -129,7 +131,7 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
             FancyPlace fp = adapter.getItem(i);
 
             GeoPoint pt = new GeoPoint(Double.valueOf(fp.getLocationLat()), Double.valueOf(fp.getLocationLong()));
-            addMarker(createMarker(pt, fp.getTitle(), false, i, R.drawable.ic_pin));
+            addMarker(createMarker(pt, fp.getTitle(), false, i, R.drawable.ic_pin, true));
         }
     }
 
