@@ -23,8 +23,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.TextView;
 
 import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.R;
@@ -35,7 +38,10 @@ import com.gabm.fancyplaces.functional.FancyPlacesDatabase;
 import com.gabm.fancyplaces.functional.MainWindowViewpagerAdapter;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -99,6 +105,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
+        showAbout();
         // handle sharing data
         /*
         Uri uri = getIntent().getData();
@@ -245,4 +252,48 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         curState = bundle.getParcelable("state");
     }
 
+    protected void showAbout() {
+        // Inflate the about message contents
+        View messageView = getLayoutInflater().inflate(R.layout.about_window, null, false);
+
+        // When linking text, force to always use default color. This works
+        // around a pressed color state bug.
+        /*TextView textView = (TextView) messageView.findViewById(R.id.about_credits);
+        int defaultColor = textView.getTextColors().getDefaultColor();
+        textView.setTextColor(defaultColor);*/
+
+        TextView description = (TextView) messageView.findViewById(R.id.about_description);
+        description.setText(readText(R.raw.about_description));
+        TextView credits = (TextView) messageView.findViewById(R.id.about_credits);
+        credits.setText(readText(R.raw.about_credits));
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.app_name);
+        builder.setView(messageView);
+        builder.create();
+        builder.show();
+    }
+
+    private String readText(int id) {
+
+        InputStream inputStream = getResources().openRawResource(id);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        int i;
+        try {
+            i = inputStream.read();
+            while (i != -1) {
+                byteArrayOutputStream.write(i);
+                i = inputStream.read();
+            }
+            inputStream.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return byteArrayOutputStream.toString();
+    }
 }
