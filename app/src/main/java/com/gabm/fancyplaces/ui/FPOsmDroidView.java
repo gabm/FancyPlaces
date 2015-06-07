@@ -106,6 +106,17 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
         return v;
     }
 
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        locationHandler.updateLocation(false);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
 
     @Override
     public void onDestroyView() {
