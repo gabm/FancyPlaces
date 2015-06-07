@@ -16,4 +16,6 @@
     <string name="fp_list_view_title">List</string>
     <string name="fp_map_view_title">Map</string>
     <string name="main_window_about">About</string>
+    <string name="sep_action_confirm_title">Save</string>
+    <string name="sep_action_edit_title">Edit</string>
 </resources>
