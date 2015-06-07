@@ -15,6 +15,4 @@
     <string name="title_activity_show_edit_place">ShowEditPlace</string>
     <string name="fp_list_view_title">List</string>
     <string name="fp_map_view_title">Map</string>
-    <string name="sep_action_confirm_title">Save</string>
-    <string name="sep_action_edit_title">Edit</string>
 </resources>

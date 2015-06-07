@@ -1,0 +1,6 @@
+Credits:
+FancyPlaces wouldn't be possible without the following libraries that are used:
+- osmdroid: https://github.com/osmdroid/osmdroid (Apache License)
+- Mapquest Tile Service: http://www.mapquest.com (ODbL)
+- FloatingActionButton: https://github.com/makovkastar/FloatingActionButton (MIT)
+- Google Material Icons: https://github.com/google/material-design-icons (CC-BY 4.0)
