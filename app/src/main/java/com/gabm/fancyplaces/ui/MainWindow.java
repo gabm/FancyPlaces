@@ -33,7 +33,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.R;
@@ -264,13 +263,9 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         // Inflate the about message contents
         View messageView = getLayoutInflater().inflate(R.layout.about_window, null, false);
 
-        TextView description = (TextView) messageView.findViewById(R.id.about_description);
-        description.setText(Html.fromHtml(readText(R.raw.about_description)));
-        description.setMovementMethod(LinkMovementMethod.getInstance());
-
-        TextView credits = (TextView) messageView.findViewById(R.id.about_credits);
-        credits.setText(Html.fromHtml(readText(R.raw.about_credits)));
-        credits.setMovementMethod(LinkMovementMethod.getInstance());
+        TextView content = (TextView) messageView.findViewById(R.id.about_content);
+        content.setText(Html.fromHtml(readText(R.raw.about_content)));
+        content.setMovementMethod(LinkMovementMethod.getInstance());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setIcon(R.drawable.ic_launcher);

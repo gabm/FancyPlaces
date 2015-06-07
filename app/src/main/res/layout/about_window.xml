@@ -22,17 +22,9 @@
     android:padding="20dip">
 
     <TextView
-        android:id="@+id/about_description"
+        android:id="@+id/about_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/about_credits"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="20dip"
         android:text=""
         android:textSize="16sp" />
 
