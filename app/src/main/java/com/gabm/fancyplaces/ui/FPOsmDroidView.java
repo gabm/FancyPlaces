@@ -41,8 +41,6 @@ import org.osmdroid.util.ResourceProxyImpl;
  */
 public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocationUpdatedListener {
 
-    private final static int LOCATION_UPDATED_INIT = 0;
-    private final static int LOCATION_UPDATED_GPS = 1;
     private ResourceProxy mResourceProxy = null;
     private OsmMapViewScrollWorkaround mMapView = null;
     private OsmMapHandler mapHandler = null;
@@ -64,7 +62,8 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
 
     @Override
     public void onLocationUpdated(Location location) {
-        onLocationUpdated(location, LOCATION_UPDATED_GPS);
+        mapHandler.setCamera(location.getLatitude(), location.getLongitude(), com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_ZOOM_FAR);
+        mapHandler.setCurrentLocationMarker(location.getLatitude(), location.getLongitude(), getString(R.string.your_location));
     }
 
     @Override
@@ -77,19 +76,6 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
                     }
                 }
         );
-    }
-
-    public void onLocationUpdated(Location location, int reason) {
-        if (location != null) {
-            switch (reason) {
-                case LOCATION_UPDATED_INIT:
-                    mapHandler.setCamera(location.getLatitude(), location.getLongitude(), com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_ZOOM_FAR);
-                    break;
-                case LOCATION_UPDATED_GPS:
-                    break;
-            }
-            mapHandler.setCurrentLocationMarker(location.getLatitude(), location.getLongitude(), getString(R.string.your_location));
-        }
     }
 
     @Override
