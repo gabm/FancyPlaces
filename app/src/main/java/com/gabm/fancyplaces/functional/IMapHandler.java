@@ -20,6 +20,7 @@ package com.gabm.fancyplaces.functional;
 import android.widget.ArrayAdapter;
 
 import com.gabm.fancyplaces.data.FancyPlace;
+import com.gabm.fancyplaces.ui.OsmMarker;
 
 /**
  * Created by gabm on 24/05/15.
@@ -32,6 +33,8 @@ public interface IMapHandler {
     void animateCamera(double lat, double lng, float zoom, int duration);
 
     void clearMarkers();
+
+    void removeMarker(OsmMarker markerToRemove);
 
     void addMarker(double lat, double lng, String text, boolean showInfoWindow);
 

@@ -38,6 +38,7 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
     private MapView curMapView = null;
     private ArrayAdapter<FancyPlace> adapter = null;
     private OnFancyPlaceSelectedListener fancyPlaceSelectedCallback = null;
+    private OsmMarker curLocationMarker = null;
 
     public OsmMapHandler(MapView mapView, OnFancyPlaceSelectedListener listener) {
         curMapView = mapView;
@@ -76,6 +77,18 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
         }
         curMapView.getOverlays().clear();
 
+    }
+
+    @Override
+    public void removeMarker(OsmMarker markerToRemove) {
+        for (int i = 0; i < curMapView.getOverlays().size(); i++) {
+            OsmMarker marker = (OsmMarker) curMapView.getOverlays().get(i);
+            if (marker == markerToRemove) {
+                marker.setInfoWindowVisible(false);
+                curMapView.getOverlays().remove(marker);
+                break;
+            }
+        }
     }
 
     protected OsmMarker createCurrentLocationMarker(GeoPoint pt, String text) {
@@ -120,8 +133,9 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
 
     @Override
     public void setCurrentLocationMarker(double lat, double lng, String title) {
-        OsmMarker marker = createCurrentLocationMarker(new GeoPoint(lat, lng), title);
-        addMarker(marker);
+        removeMarker(curLocationMarker);
+        curLocationMarker = createCurrentLocationMarker(new GeoPoint(lat, lng), title);
+        addMarker(curLocationMarker);
     }
 
     @Override
