@@ -15,4 +15,5 @@
     <string name="title_activity_show_edit_place">ShowEditPlace</string>
     <string name="fp_list_view_title">List</string>
     <string name="fp_map_view_title">Map</string>
+    <string name="main_window_about">About</string>
 </resources>

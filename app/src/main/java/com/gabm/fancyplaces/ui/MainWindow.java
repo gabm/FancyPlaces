@@ -26,8 +26,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.R;
@@ -75,7 +81,10 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_window_toolbar);
         setSupportActionBar(toolbar);
         if (Build.VERSION.SDK_INT >= 19)
-            toolbar.setPadding(0, curAppContext.getStatusBarHeight(), 0, 0);
+        {
+            int padding_right = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+            toolbar.setPadding(toolbar.getPaddingLeft(), curAppContext.getStatusBarHeight(), padding_right, 0);
+        }
 
         // store data
         fancyPlacesDatabase = new FancyPlacesDatabase(getApplicationContext());
@@ -105,7 +114,6 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
-        showAbout();
         // handle sharing data
         /*
         Uri uri = getIntent().getData();
@@ -257,9 +265,12 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         View messageView = getLayoutInflater().inflate(R.layout.about_window, null, false);
 
         TextView description = (TextView) messageView.findViewById(R.id.about_description);
-        description.setText(readText(R.raw.about_description));
+        description.setText(Html.fromHtml(readText(R.raw.about_description)));
+        description.setMovementMethod(LinkMovementMethod.getInstance());
+
         TextView credits = (TextView) messageView.findViewById(R.id.about_credits);
-        credits.setText(readText(R.raw.about_credits));
+        credits.setText(Html.fromHtml(readText(R.raw.about_credits)));
+        credits.setMovementMethod(LinkMovementMethod.getInstance());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setIcon(R.drawable.ic_launcher);
@@ -289,5 +300,27 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         }
 
         return byteArrayOutputStream.toString();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main_window, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.main_window_about) {
+
+            showAbout();
+            return true;
+        }
+        return false;
     }
 }
