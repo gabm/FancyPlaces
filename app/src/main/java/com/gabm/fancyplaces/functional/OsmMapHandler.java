@@ -48,8 +48,8 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
     @Override
     public void setCamera(double lat, double lng, float zoom) {
         IGeoPoint pt = new GeoPoint(lat, lng);
-        curMapController.setCenter(pt);
         curMapController.setZoom((int) zoom);
+        curMapController.setCenter(pt);
     }
 
     @Override
@@ -78,11 +78,24 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
 
     }
 
-    protected OsmMarker createMarker(GeoPoint pt, String text, boolean showInfoWindow, int id, int drawableID) {
+    protected OsmMarker createCurrentLocationMarker(GeoPoint pt, String text) {
         OsmMarker marker = new OsmMarker(curMapView.getContext(), curMapView);
 
         marker.setPosition(pt);
-        marker.setIcon(curMapView.getContext().getResources().getDrawable(drawableID));
+        marker.setIcon(curMapView.getContext().getResources().getDrawable(R.drawable.ic_my_location));
+        marker.setAnchor(OsmMarker.ANCHOR_CENTER, OsmMarker.ANCHOR_CENTER);
+        marker.setTitle(text);
+        marker.setId(-1);
+        marker.setInfoWindowVisible(false);
+
+        return marker;
+    }
+
+    protected OsmMarker createMarker(GeoPoint pt, String text, boolean showInfoWindow, int id) {
+        OsmMarker marker = new OsmMarker(curMapView.getContext(), curMapView);
+
+        marker.setPosition(pt);
+        marker.setIcon(curMapView.getContext().getResources().getDrawable(R.drawable.ic_pin));
         marker.setAnchor(OsmMarker.ANCHOR_CENTER, OsmMarker.ANCHOR_BOTTOM);
         marker.setTitle(text);
         marker.setId(id);
@@ -97,7 +110,7 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
     public void addMarker(double lat, double lng, String text, boolean showInfoWindow) {
         GeoPoint pt = new GeoPoint(lat, lng);
 
-        addMarker(createMarker(pt, text, showInfoWindow, -1, R.drawable.ic_pin));
+        addMarker(createMarker(pt, text, showInfoWindow, -1));
     }
 
     protected void addMarker(OsmMarker marker) {
@@ -107,7 +120,7 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
 
     @Override
     public void setCurrentLocationMarker(double lat, double lng, String title) {
-        OsmMarker marker = createMarker(new GeoPoint(lat, lng), title, false, -1, R.drawable.ic_my_location);
+        OsmMarker marker = createCurrentLocationMarker(new GeoPoint(lat, lng), title);
         addMarker(marker);
     }
 
@@ -129,7 +142,7 @@ public class OsmMapHandler extends DataSetObserver implements IMapHandler, OsmMa
             FancyPlace fp = adapter.getItem(i);
 
             GeoPoint pt = new GeoPoint(Double.valueOf(fp.getLocationLat()), Double.valueOf(fp.getLocationLong()));
-            addMarker(createMarker(pt, fp.getTitle(), false, i, R.drawable.ic_pin));
+            addMarker(createMarker(pt, fp.getTitle(), false, i));
         }
     }
 
