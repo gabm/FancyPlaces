@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.R;
@@ -170,9 +171,14 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 break;
             case OnFancyPlaceSelectedListener.INTENT_EXPORT_TO_GPX:
                 GPXExporter exporter = new GPXExporter();
-                File exportFile = new File(getApplicationContext().getExternalFilesDir("").getAbsolutePath() + File.separator + "export.gpx");
+                File exportFile = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "export.gpx");
 
-                exporter.WriteToFile(fp, exportFile, null);
+                if (exporter.WriteToFile(fp, exportFile, null)) {
+                    Toast.makeText(getApplicationContext(), "File successfully exported to: " + FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "export.gpx", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "File export failed!", Toast.LENGTH_SHORT).show();
+
+                }
                 break;
         }
     }

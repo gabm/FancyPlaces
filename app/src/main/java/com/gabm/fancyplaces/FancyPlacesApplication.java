@@ -20,6 +20,7 @@ package com.gabm.fancyplaces;
 import android.app.Application;
 import android.content.Context;
 import android.location.LocationManager;
+import android.os.Environment;
 
 import com.gabm.fancyplaces.functional.LocationHandler;
 
@@ -34,14 +35,26 @@ public class FancyPlacesApplication extends Application {
     static public final int MAP_DEFAULT_ZOOM_NEAR = 16;
     static public final int MAP_DEFAULT_ZOOM_FAR = 13;
     static public final int MAP_DEFAULT_DURATION = 3000;
+
     public static String TMP_IMAGE_FULL_PATH = "";
+    public static String EXTERNAL_EXPORT_DIR = "";
     private static LocationHandler locationHandler = null;
 
     @Override
     public void onCreate() {
-        locationHandler = new LocationHandler((LocationManager) getSystemService(Context.LOCATION_SERVICE));
+
+
+        // tmp file dir
         TMP_IMAGE_FULL_PATH = getExternalCacheDir() + File.separator + com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FILENAME;
+
+        // external export dir
+        EXTERNAL_EXPORT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getResources().getString(R.string.app_name) + File.separator;
+        (new File(EXTERNAL_EXPORT_DIR)).mkdirs();
+
+        // attach lifecycle callbacks to location handler
+        locationHandler = new LocationHandler((LocationManager) getSystemService(Context.LOCATION_SERVICE));
         registerActivityLifecycleCallbacks(locationHandler);
+
 
     }
 
