@@ -1,0 +1,169 @@
+/*
+ * Copyright (C) 2015 Matthias Gabriel
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package com.gabm.fancyplaces.functional;
+
+import com.gabm.fancyplaces.data.FancyPlace;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+
+/**
+ * Created by gabm on 08/06/15.
+ */
+public class GPXExporter implements IExporter {
+    /**
+     * XML header.
+     */
+    private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
+
+    /**
+     * GPX opening tag
+     */
+    private static final String TAG_GPX = "<gpx"
+            + " xmlns=\"http://www.topografix.com/GPX/1/1\""
+            + " version=\"1.1\""
+            + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+            + " xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd \">";
+
+    /**
+     * Date format for a point timestamp.
+     */
+    private static final SimpleDateFormat POINT_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    /**
+     * Writes the GPX file
+     *
+     * @param trackName Name of the GPX track (metadata)
+     * @param fpList    FpList
+     * @param target    Target GPX file
+     * @throws IOException
+     */
+    public void writeGpxFile(String trackName, List<FancyPlace> fpList, File target) throws IOException {
+        FileWriter fw = new FileWriter(target);
+
+        fw.write(XML_HEADER + "\n");
+        fw.write(TAG_GPX + "\n");
+
+        //writeTrackPoints(trackName, fw, cTrackPoints);
+        writeWayPoints(fw, fpList);
+
+        fw.write("</gpx>");
+
+        fw.close();
+    }
+
+
+    /**
+     * Iterates on way points and write them.
+     *
+     * @param fw     Writer to the target file.
+     * @param fpList Cursor to way points.
+     * @throws IOException
+     */
+    public void writeWayPoints(FileWriter fw, List<FancyPlace> fpList) throws IOException {
+
+        for (int i = 0; i < fpList.size(); i++) {
+            FancyPlace curFancyPlace = fpList.get(i);
+
+            StringBuffer out = new StringBuffer();
+            out.append("\t"
+                    + "<wpt lat=\"" + curFancyPlace.getLocationLat() + "\" "
+                    + "lon=\"" + curFancyPlace.getLocationLong() + "\">" + "\n");
+            out.append("\t\t" + "<time>" + POINT_DATE_FORMATTER.format(new Date()) + "</time>" + "\n");
+            out.append("\t\t" + "<name>" + curFancyPlace.getTitle() + "</name>" + "\n");
+            out.append("\t" + "</wpt>" + "\n");
+
+            fw.write(out.toString());
+        }
+    }
+
+    @Override
+    public boolean WriteToFile(List<FancyPlace> fpList, File targetName, Object userData) {
+
+        boolean success = false;
+        try {
+            writeGpxFile(targetName.getName(), fpList, targetName);
+            success = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return success;
+    }
+
+    @Override
+    public boolean WriteToFile(FancyPlace fancyPlace, File target, Object userData) {
+
+        List<FancyPlace> fpList = new ArrayList<>();
+        fpList.add(fancyPlace);
+
+
+        boolean success = false;
+        try {
+            writeGpxFile(target.getName(), fpList, target);
+            success = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return success;
+    }
+}
+
+
+/**
+ * Iterates on track points and write them.
+ *
+ * @param trackName Name of the track (metadata).
+ * @param fw Writer to the target file.
+ * @param fpList List of FancyPlaces
+ * @throws IOException
+ */
+
+    /*
+    public static void writeTrackPoints(String trackName, FileWriter fw, List<FancyPlace> fpList) throws IOException {
+        fw.write("\t" + "<trk>");
+        fw.write("\t\t" + "<name>" + trackName + "</name>" + "\n");
+
+        fw.write("\t\t" + "<trkseg>" + "\n");
+
+        for (int i=0; i<fpList.size();i++)
+        {
+            FancyPlace curFancyPlace = fpList.get(i);
+
+            StringBuffer out = new StringBuffer();
+            out.append("\t\t\t" + "<trkpt lat=\""
+                    + curFancyPlace.getLocationLat() + "\" "
+                    + "lon=\"" + curFancyPlace.getLocationLong() + "\">");
+            Date date = new Date();
+            out.append("<time>" + POINT_DATE_FORMATTER.format(date) + "</time>");
+
+
+            out.append("</trkpt>" + "\n");
+            fw.write(out.toString());
+        }
+
+        fw.write("\t\t" + "</trkseg>" + "\n");
+        fw.write("\t" + "</trk>" + "\n");
+    }*/

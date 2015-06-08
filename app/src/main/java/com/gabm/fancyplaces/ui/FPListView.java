@@ -109,7 +109,7 @@ public class FPListView extends TabItem {
 
         menu.setHeaderTitle(parent.fancyPlaceArrayAdapter.getItem(info.position).getTitle());
 
-        String[] menuItems = {getString(R.string.context_menu_delete)/*, getString(R.string.context_menu_share)*/};
+        String[] menuItems = {getString(R.string.context_menu_delete)/*, getString(R.string.context_menu_share)*/, "Export to GPX"};
 
         for (int i = 0; i < menuItems.length; i++) {
             menu.add(Menu.NONE, i, i, menuItems[i]);
@@ -128,7 +128,8 @@ public class FPListView extends TabItem {
             fancyPlaceSelectedCallback.onFancyPlaceSelected(info.position, OnFancyPlaceSelectedListener.INTENT_DELETE);
         } else if (menuItemIndex == 1) {
             // share
-            fancyPlaceSelectedCallback.onFancyPlaceSelected(info.position, OnFancyPlaceSelectedListener.INTENT_SHARE);
+            //fancyPlaceSelectedCallback.onFancyPlaceSelected(info.position, OnFancyPlaceSelectedListener.INTENT_SHARE);
+            fancyPlaceSelectedCallback.onFancyPlaceSelected(info.position, OnFancyPlaceSelectedListener.INTENT_EXPORT_TO_GPX);
         }
         return true;
     }

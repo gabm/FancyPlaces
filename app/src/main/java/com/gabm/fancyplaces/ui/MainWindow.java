@@ -40,6 +40,7 @@ import com.gabm.fancyplaces.data.FancyPlace;
 import com.gabm.fancyplaces.data.ImageFile;
 import com.gabm.fancyplaces.functional.FancyPlaceListViewAdapter;
 import com.gabm.fancyplaces.functional.FancyPlacesDatabase;
+import com.gabm.fancyplaces.functional.GPXExporter;
 import com.gabm.fancyplaces.functional.MainWindowViewpagerAdapter;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 
@@ -166,6 +167,12 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 break;
             case OnFancyPlaceSelectedListener.INTENT_CREATE_NEW:
                 showSEPActivityForResult(getApplicationContext(), new FancyPlace(), ShowEditPlace.MODE_EDIT);
+                break;
+            case OnFancyPlaceSelectedListener.INTENT_EXPORT_TO_GPX:
+                GPXExporter exporter = new GPXExporter();
+                File exportFile = new File(getApplicationContext().getExternalFilesDir("").getAbsolutePath() + File.separator + "export.gpx");
+
+                exporter.WriteToFile(fp, exportFile, null);
                 break;
         }
     }
