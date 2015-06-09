@@ -69,10 +69,11 @@ public class FPListView extends TabItem {
             }
         });
 
-        registerForContextMenu(fancyPlacesList);
+        //registerForContextMenu(fancyPlacesList);
 
         // set adapter
         fancyPlacesList.setAdapter(parent.fancyPlaceArrayAdapter);
+        fancyPlacesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         // add click listener
         fancyPlacesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -81,6 +82,7 @@ public class FPListView extends TabItem {
                 fancyPlaceSelectedCallback.onFancyPlaceSelected(position, OnFancyPlaceSelectedListener.INTENT_VIEW);
             }
         });
+
 
         return v;
     }

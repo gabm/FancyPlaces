@@ -30,10 +30,16 @@ import java.lang.ref.WeakReference;
  */
 public class ImageFileLoaderTask extends AsyncTask<ImageFile, Void, Bitmap> {
     private final WeakReference<ImageView> imageViewReference;
+    private OnImageLoaderCompletedListener onImageLoaderCompletedListener = null;
 
-    public ImageFileLoaderTask(ImageView imageView) {
+    public interface OnImageLoaderCompletedListener {
+        void onImageLoaderCompleted(Bitmap bitmap);
+    }
+
+    public ImageFileLoaderTask(ImageView imageView, OnImageLoaderCompletedListener imageLoaderCompletedListener) {
         // Use a WeakReference to ensure the ImageView can be garbage collected
-        imageViewReference = new WeakReference<ImageView>(imageView);
+        imageViewReference = new WeakReference<>(imageView);
+        onImageLoaderCompletedListener = imageLoaderCompletedListener;
     }
 
     // Decode image in background.
@@ -47,9 +53,13 @@ public class ImageFileLoaderTask extends AsyncTask<ImageFile, Void, Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         if (imageViewReference != null && bitmap != null) {
             final ImageView imageView = imageViewReference.get();
+
             if (imageView != null) {
                 imageView.setImageBitmap(bitmap);
             }
+
+            if (onImageLoaderCompletedListener != null)
+                onImageLoaderCompletedListener.onImageLoaderCompleted(bitmap);
         }
     }
 }

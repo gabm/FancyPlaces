@@ -9,7 +9,8 @@
         android:id="@+id/fp_list_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:choiceMode="multipleChoice"/>
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fp_list_fab"
