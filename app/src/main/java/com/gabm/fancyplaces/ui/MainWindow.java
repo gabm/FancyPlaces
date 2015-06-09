@@ -74,6 +74,10 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
 
+        String debugTitle = getResources().getString(R.string.debug_title);
+        if (!debugTitle.equals(""))
+            setTitle(debugTitle);
+
         curAppContext = (FancyPlacesApplication) getApplicationContext();
 
         // inflate toolbar
