@@ -54,8 +54,6 @@ public class FancyPlacesApplication extends Application {
         // attach lifecycle callbacks to location handler
         locationHandler = new LocationHandler((LocationManager) getSystemService(Context.LOCATION_SERVICE));
         registerActivityLifecycleCallbacks(locationHandler);
-
-
     }
 
     public LocationHandler getLocationHandler() {
