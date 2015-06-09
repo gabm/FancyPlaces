@@ -27,8 +27,6 @@ import android.text.format.Time;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by gabm on 29.12.14.
@@ -37,15 +35,19 @@ public class LocationHandler implements LocationListener, Application.ActivityLi
 
     private static final int ONE_MINUTE = 1000 * 60;
     private static final int TWO_MINUTES = 1000 * 60 * 2;
-    List<String> locationProviders = null;
+
+    private List<String> relevantLocationProviders = new ArrayList<>();
+
     private Location curLocation = null;
     private Boolean searchingForLocation = false;
     private android.location.LocationManager curLocationManager = null;
     private List<OnLocationUpdatedListener> onLocationUpdatedListeners = new ArrayList<>();
-    private Timer timeoutTimer = null;
 
     public LocationHandler(android.location.LocationManager locationManager) {
         curLocationManager = locationManager;
+
+        relevantLocationProviders.add(LocationManager.NETWORK_PROVIDER);
+        relevantLocationProviders.add(LocationManager.GPS_PROVIDER);
 
         initLocation();
     }
@@ -57,18 +59,13 @@ public class LocationHandler implements LocationListener, Application.ActivityLi
             notifyLocationUpdated();
     }
 
+
     protected void initLocation() {
-        locationProviders = curLocationManager.getProviders(true);
+        for (int i = 0; i < relevantLocationProviders.size(); i++) {
+            Location lastKnownLoc = curLocationManager.getLastKnownLocation(relevantLocationProviders.get(i));
 
-        Location netLoc = curLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        Location gpsLoc = curLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-        if (isValidLocation(netLoc)) {
-            curLocation = netLoc;
-        }
-
-        if (isValidLocation(gpsLoc)) {
-            curLocation = gpsLoc;
+            if (isValidLocation(lastKnownLoc))
+                curLocation = lastKnownLoc;
         }
     }
 
@@ -120,8 +117,7 @@ public class LocationHandler implements LocationListener, Application.ActivityLi
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        initLocation();
-        updateLocation(false);
+
     }
 
     @Override
@@ -134,23 +130,15 @@ public class LocationHandler implements LocationListener, Application.ActivityLi
     }
 
     private void startLocationUpdate() {
-        if (locationProviders.isEmpty())
+        if (relevantLocationProviders.isEmpty())
             return;
 
         notifyLocationUpdating();
 
         // search for new location
-        for (int i = 0; i < locationProviders.size(); i++)
-            curLocationManager.requestLocationUpdates(locationProviders.get(i), 0, 0, LocationHandler.this);
+        for (int i = 0; i < relevantLocationProviders.size(); i++)
+            curLocationManager.requestLocationUpdates(relevantLocationProviders.get(i), 0, 0, LocationHandler.this);
 
-        // start timeout
-        timeoutTimer = new Timer();
-        timeoutTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                stopLocationUpdate();
-            }
-        }, ONE_MINUTE);
 
         searchingForLocation = true;
     }
@@ -158,23 +146,14 @@ public class LocationHandler implements LocationListener, Application.ActivityLi
     private void stopLocationUpdate() {
         curLocationManager.removeUpdates(this);
         searchingForLocation = false;
-        stopTimer();
-    }
-
-    private void stopTimer() {
-        if (timeoutTimer == null)
-            return;
-
-        timeoutTimer.cancel();
-        timeoutTimer.purge();
-        timeoutTimer = null;
     }
 
 
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
-        if (bundle != null)
+        if (bundle != null) {
             searchingForLocation = bundle.getBoolean("searchingForLocation");
+        }
     }
 
     @Override
