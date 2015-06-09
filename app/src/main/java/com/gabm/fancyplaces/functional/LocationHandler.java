@@ -46,7 +46,6 @@ public class LocationHandler implements LocationListener, Application.ActivityLi
 
     public LocationHandler(android.location.LocationManager locationManager) {
         curLocationManager = locationManager;
-        locationProviders = locationManager.getProviders(true);
 
         initLocation();
     }
@@ -59,6 +58,8 @@ public class LocationHandler implements LocationListener, Application.ActivityLi
     }
 
     protected void initLocation() {
+        locationProviders = curLocationManager.getProviders(true);
+
         Location netLoc = curLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         Location gpsLoc = curLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
@@ -119,7 +120,8 @@ public class LocationHandler implements LocationListener, Application.ActivityLi
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
+        initLocation();
+        updateLocation(false);
     }
 
     @Override
