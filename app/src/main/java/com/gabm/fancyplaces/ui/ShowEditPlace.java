@@ -109,6 +109,7 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         final ColorDrawable cd = new ColorDrawable(getResources().getColor(R.color.ColorPrimary));
         cd.setAlpha(0);
         toolbar.setBackground(cd);
+
         if (Build.VERSION.SDK_INT >= 19) {
             int padding_right = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
             toolbar.setPadding(toolbar.getPaddingLeft(), curAppContext.getStatusBarHeight(), padding_right, 0);
@@ -186,7 +187,7 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
     protected void onActivityModeChanged() {
 
-        FancyPlace data = currentState.data;
+        final FancyPlace data = currentState.data;
 
         SEPState.ViewElementVisibility visibility = currentState.viewElementVisibility;
         ViewElements viewElements = currentViewElements;
@@ -217,6 +218,7 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
         if (mode == MODE_EDIT || mode == MODE_PREVIEW) {
             visibility.mapUpdateButtonVisibility = View.VISIBLE;
+            currentViewElements.mapView.setOnClickListener(null);
         } else {
             visibility.mapUpdateButtonVisibility = View.GONE;
         }
@@ -281,9 +283,12 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         if (currentState.mode == MODE_VIEW) {
             curMenu.findItem(R.id.sep_action_edit).setVisible(true);
             curMenu.findItem(R.id.sep_action_confirm).setVisible(false);
+            curMenu.findItem(R.id.sep_show_on_map).setVisible(true);
         } else {
             curMenu.findItem(R.id.sep_action_edit).setVisible(false);
             curMenu.findItem(R.id.sep_action_confirm).setVisible(true);
+            curMenu.findItem(R.id.sep_show_on_map).setVisible(false);
+
         }
     }
 
@@ -351,6 +356,16 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
             return true;
 
+        } else if (id == R.id.sep_show_on_map) {
+            final FancyPlace curFP = currentState.data;
+            String loc = curFP.getLocationLat() + "," + curFP.getLocationLong();
+            String uriString =
+                    "geo:" + loc + "?q="
+                            + loc + "(" + curFP.getTitle() + ")&d="
+                            + curFP.getNotes();
+
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
