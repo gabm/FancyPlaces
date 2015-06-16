@@ -31,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.gabm.fancyplaces.R;
+import com.gabm.fancyplaces.functional.IOnListModeChangeListener;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 import com.melnykov.fab.FloatingActionButton;
 
@@ -42,6 +43,7 @@ public class FPListView extends TabItem {
     private OnFancyPlaceSelectedListener fancyPlaceSelectedCallback = null;
     private ListView fancyPlacesList = null;
     private MainWindow parent = null;
+    private IOnListModeChangeListener onListModeChangeListener = null;
 
 
 
@@ -75,14 +77,10 @@ public class FPListView extends TabItem {
         fancyPlacesList.setAdapter(parent.fancyPlaceArrayAdapter);
         fancyPlacesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-        // add click listener
-        fancyPlacesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                fancyPlaceSelectedCallback.onFancyPlaceSelected(position, OnFancyPlaceSelectedListener.INTENT_VIEW);
-            }
-        });
+        // add on mode change listener
+        onListModeChangeListener = parent.fancyPlaceArrayAdapter;
 
+        changeListMode(IOnListModeChangeListener.MODE_NORMAL);
 
         return v;
     }
@@ -95,7 +93,7 @@ public class FPListView extends TabItem {
             fancyPlaceSelectedCallback = (MainWindow) activity;
             parent = (MainWindow) activity;
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -134,6 +132,38 @@ public class FPListView extends TabItem {
             fancyPlaceSelectedCallback.onFancyPlaceSelected(info.position, OnFancyPlaceSelectedListener.INTENT_EXPORT_TO_GPX);
         }
         return true;
+    }
+
+    protected void changeListMode(int newMode) {
+        if (newMode == IOnListModeChangeListener.MODE_NORMAL) {
+            // add click listener
+            fancyPlacesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    fancyPlaceSelectedCallback.onFancyPlaceSelected(position, OnFancyPlaceSelectedListener.INTENT_VIEW);
+                }
+            });
+
+            fancyPlacesList.setOnItemLongClickListener(
+                    new AdapterView.OnItemLongClickListener() {
+                        @Override
+                        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            changeListMode(IOnListModeChangeListener.MODE_MULTI_SELECT);
+                            return false;
+                        }
+                    });
+        }
+        if (newMode == IOnListModeChangeListener.MODE_MULTI_SELECT) {
+            fancyPlacesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    parent.fancyPlaceArrayAdapter.toggleSelected(i);
+                }
+            });
+            fancyPlacesList.setOnItemLongClickListener(null);
+        }
+
+        onListModeChangeListener.onListModeChange(newMode);
     }
 
 }

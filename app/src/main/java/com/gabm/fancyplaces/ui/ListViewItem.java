@@ -20,12 +20,7 @@ package com.gabm.fancyplaces.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -35,8 +30,6 @@ import com.gabm.fancyplaces.R;
 import com.gabm.fancyplaces.data.FancyPlace;
 import com.gabm.fancyplaces.functional.ImageFileLoaderTask;
 
-import java.lang.ref.WeakReference;
-
 /**
  * Created by gabm on 08/06/15.
  */
@@ -45,7 +38,6 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
     private Bitmap thumbnail;
     private ImageView thumbnailView;
     private TextView titleTextView;
-    private View itemView;
 
     private boolean selected = false;
     private boolean selectable = false;
@@ -53,12 +45,10 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
     private Animation animation1;
     private Animation animation2;
 
-    private View.OnClickListener itemOnClickListener;
 
     public ListViewItem(Context context, View v) {
         thumbnailView = (ImageView)v.findViewById(R.id.li_fp_thumbnail);
         titleTextView = (TextView)v.findViewById(R.id.li_fp_title);
-        itemView = v;
 
         animation1 = AnimationUtils.loadAnimation(context, R.anim.to_middle);
         animation2 = AnimationUtils.loadAnimation(context, R.anim.from_middle);
@@ -84,14 +74,15 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
     public void setSelectable(boolean _selectable)
     {
         selectable = _selectable;
-        if (selectable)
-        {
-            thumbnailView.setOnClickListener(new IconOnClickListener());
-        } else
-        {
-            thumbnailView.setOnClickListener(null);
+
+        if (!selectable)
             setSelected(false);
-        }
+    }
+
+    public void toggleSelected() {
+        selected = !selected;
+
+        startAnimation();
     }
 
     public boolean isSelected()
@@ -104,7 +95,11 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
         selected = _selected;
     }
 
-    private void setAnimationListener() {
+    private void startAnimation() {
+        thumbnailView.clearAnimation();
+        thumbnailView.setAnimation(animation1);
+        thumbnailView.startAnimation(animation1);
+
         Animation.AnimationListener animListener;
         animListener = new FlipAnimationListener();
 
@@ -117,18 +112,6 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
         thumbnail = bitmap;
     }
 
-    private class IconOnClickListener implements View.OnClickListener
-    {
-        public IconOnClickListener(){}
-
-        @Override
-        public void onClick(View v) {
-            thumbnailView.clearAnimation();
-            thumbnailView.setAnimation(animation1);
-            thumbnailView.startAnimation(animation1);
-            setAnimationListener();
-        }
-    }
 
     private class FlipAnimationListener implements Animation.AnimationListener
     {
