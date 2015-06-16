@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 Matthias Gabriel
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+  <string name="context_menu_delete">Suprimir</string>
+  <string name="context_menu_share">Compartir</string>
+  <string name="error_saving">Error al guardar per falta de títol i ubicació</string>
+  <string name="fp_list_view_title">Llista</string>
+  <string name="fp_map_view_title">Mapa</string>
+  <string name="main_window_about">Sobre..</string>
+  <string name="map">Mapa</string>
+  <string name="new_fancy_place">Nou Fancy Place</string>
+  <string name="notes">Notes</string>
+  <string name="sep_action_confirm_title">Guardar</string>
+  <string name="sep_action_edit_title">Edició</string>
+  <string name="sep_update_map_button">Actualitzar ubicació</string>
+  <string name="updating_location">Actualitzant ubicació</string>
+  <string name="your_location">Tu ets aquí!</string>
+</resources>
