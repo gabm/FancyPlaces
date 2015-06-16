@@ -79,6 +79,8 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
         mapHandler = new OsmMapHandler(currentViewElements.mapView, null);
         currentViewElements.mapView.setEnabled(false);
+        currentViewElements.mapView.setMultiTouchControls(false);
+        currentViewElements.mapView.setClickable(true);
 
         currentState.result_code = RESULT_DATA_NOT_CHANGED;
 
