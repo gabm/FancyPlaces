@@ -71,9 +71,6 @@ public class LocationHandler implements LocationListener, Application.ActivityLi
 
     public void addOnLocationUpdatedListener(OnLocationUpdatedListener locationUpdatedListener) {
         onLocationUpdatedListeners.add(locationUpdatedListener);
-
-        if (isValidLocation(curLocation))
-            locationUpdatedListener.onLocationUpdated(curLocation);
     }
 
     public void removeOnLocationUpdatedListener(OnLocationUpdatedListener locationUpdatedListener) {
