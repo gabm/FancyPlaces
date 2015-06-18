@@ -21,6 +21,9 @@ Currently we have:
 - French (credits: RobyRemzy, v1.1.0+)
 - Japanese (credits: naofum, v1.2.0+)
 - Portuguese, Brazlian (credits: mauriciomoura, v1.2.0+)
+- Catalan (credits: sancv4, v1.2.0+)
+- Spanish (credits: sancv4, v1.2.0+)
+- Dutch (credits: YarrHarr, v1.2.0+)
 
 ## License
 This program is licensed under GPLv3 and the whole source code is available on github.
