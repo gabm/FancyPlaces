@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gabm.fancyplaces.R;
@@ -38,20 +39,24 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
     private Bitmap thumbnail;
     private ImageView thumbnailView;
     private TextView titleTextView;
+    private LinearLayout backgroundLayoutView;
+    private Context curContext;
 
     private boolean selected = false;
     private boolean selectable = false;
 
-    private Animation animation1;
-    private Animation animation2;
+    private Animation animationBegin;
+    private Animation animationEnd;
 
 
     public ListViewItem(Context context, View v) {
         thumbnailView = (ImageView)v.findViewById(R.id.li_fp_thumbnail);
         titleTextView = (TextView)v.findViewById(R.id.li_fp_title);
+        backgroundLayoutView = (LinearLayout) v.findViewById(R.id.li_background);
+        curContext = context;
 
-        animation1 = AnimationUtils.loadAnimation(context, R.anim.to_middle);
-        animation2 = AnimationUtils.loadAnimation(context, R.anim.from_middle);
+        animationBegin = AnimationUtils.loadAnimation(context, R.anim.to_middle);
+        animationEnd = AnimationUtils.loadAnimation(context, R.anim.from_middle);
 
         thumbnail = ((BitmapDrawable)thumbnailView.getDrawable()).getBitmap();
     }
@@ -79,10 +84,13 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
             setSelected(false);
     }
 
-    public void toggleSelected() {
-        selected = !selected;
+    public void toggleAndAnimateSelected() {
+        startTogglingWithAnimation();
+    }
 
-        startAnimation();
+    public void setAndAnimateSelected(boolean _selected) {
+        if (selected != _selected)
+            startTogglingWithAnimation();
     }
 
     public boolean isSelected()
@@ -90,21 +98,29 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
         return selected;
     }
 
-    public void setSelected(boolean _selected)
+    protected void setSelected(boolean _selected)
     {
         selected = _selected;
+
+        if (selected) {
+            backgroundLayoutView.setBackgroundColor(curContext.getResources().getColor(R.color.ColorBackgroundAccent));
+            thumbnailView.setImageResource(R.drawable.ic_done_white_48dp);
+        } else {
+            backgroundLayoutView.setBackgroundColor(curContext.getResources().getColor(R.color.ColorBackground));
+            thumbnailView.setImageBitmap(thumbnail);
+        }
     }
 
-    private void startAnimation() {
+    private void startTogglingWithAnimation() {
         thumbnailView.clearAnimation();
-        thumbnailView.setAnimation(animation1);
-        thumbnailView.startAnimation(animation1);
+        thumbnailView.setAnimation(animationBegin);
+        thumbnailView.startAnimation(animationBegin);
 
         Animation.AnimationListener animListener;
         animListener = new FlipAnimationListener();
 
-        animation1.setAnimationListener(animListener);
-        animation2.setAnimationListener(animListener);
+        animationBegin.setAnimationListener(animListener);
+        animationEnd.setAnimationListener(animListener);
     }
 
     @Override
@@ -118,33 +134,24 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
         public FlipAnimationListener(){}
         @Override
         public void onAnimationStart(Animation animation) {
-            if (animation == animation1) {
-                if (!isSelected()) {
-                    thumbnailView.setImageResource(R.drawable.ic_done_white_48dp);
-                } else {
-                    thumbnailView.setImageBitmap(thumbnail);
-
-                }
-
-                thumbnailView.clearAnimation();
-                thumbnailView.setAnimation(animation2);
-                thumbnailView.startAnimation(animation2);
-            } else {
-                setSelected(!isSelected());
-            }
         }
 
 
         @Override
         public void onAnimationRepeat(Animation arg0) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
-        public void onAnimationEnd(Animation arg0) {
-            // TODO Auto-generated method stub
+        public void onAnimationEnd(Animation animation) {
+            if (animation == animationBegin) {
+                setSelected(!isSelected());
 
+                thumbnailView.clearAnimation();
+                thumbnailView.setAnimation(animationEnd);
+                thumbnailView.startAnimation(animationEnd);
+            } else {
+                thumbnailView.clearAnimation();
+            }
         }
     }
 }

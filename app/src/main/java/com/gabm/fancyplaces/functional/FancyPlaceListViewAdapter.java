@@ -66,11 +66,7 @@ public class FancyPlaceListViewAdapter extends ArrayAdapter<FancyPlace> implemen
 
     public void toggleSelected(int i)
     {
-        listViewItems.get(i).toggleSelected();
-    }
-
-    public void setSelected(int i, boolean isSelected) {
-        listViewItems.get(i).setSelected(isSelected);
+        listViewItems.get(i).toggleAndAnimateSelected();
     }
 
     @Override

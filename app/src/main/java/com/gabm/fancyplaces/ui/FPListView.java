@@ -75,7 +75,7 @@ public class FPListView extends TabItem {
 
         // set adapter
         fancyPlacesList.setAdapter(parent.fancyPlaceArrayAdapter);
-        fancyPlacesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        //fancyPlacesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         // add on mode change listener
         onListModeChangeListener = parent.fancyPlaceArrayAdapter;
@@ -149,7 +149,8 @@ public class FPListView extends TabItem {
                         @Override
                         public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                             changeListMode(IOnListModeChangeListener.MODE_MULTI_SELECT);
-                            return false;
+                            parent.fancyPlaceArrayAdapter.toggleSelected(i);
+                            return true;
                         }
                     });
         }
