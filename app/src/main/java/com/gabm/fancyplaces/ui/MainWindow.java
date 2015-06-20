@@ -39,9 +39,10 @@ import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.R;
 import com.gabm.fancyplaces.data.FancyPlace;
 import com.gabm.fancyplaces.data.ImageFile;
-import com.gabm.fancyplaces.functional.FancyPlaceListViewAdapter;
+import com.gabm.fancyplaces.functional.FancyPlacesArrayAdapter;
 import com.gabm.fancyplaces.functional.FancyPlacesDatabase;
 import com.gabm.fancyplaces.functional.GPXExporter;
+import com.gabm.fancyplaces.functional.IOnListModeChangeListener;
 import com.gabm.fancyplaces.functional.MainWindowViewpagerAdapter;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 
@@ -59,17 +60,18 @@ import java.util.List;
  */
 
 
-public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelectedListener {
+public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelectedListener, IOnListModeChangeListener {
 
     public static int REQUEST_SHOW_EDIT_PLACE = 0;
     private static FancyPlacesApplication curAppContext = null;
-    public FancyPlaceListViewAdapter fancyPlaceArrayAdapter = null;
+    public FancyPlacesArrayAdapter fancyPlaceArrayAdapter = null;
     ViewPager pager;
     MainWindowViewpagerAdapter viewpagerAdapter;
     SlidingTabLayout tabs;
     private FancyPlacesDatabase fancyPlacesDatabase = null;
     private LFPState curState = new LFPState();
     private ArrayList<FancyPlace> fancyPlaces = null;
+    private FPListView fpListView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +97,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         fancyPlacesDatabase = new FancyPlacesDatabase(getApplicationContext());
         fancyPlacesDatabase.open();
         fancyPlaces = (ArrayList<FancyPlace>) fancyPlacesDatabase.getAllFancyPlaces();
-        fancyPlaceArrayAdapter = new FancyPlaceListViewAdapter(getApplicationContext(), R.layout.list_item_fancy_place, fancyPlaces);
+        fancyPlaceArrayAdapter = new FancyPlacesArrayAdapter(getApplicationContext(), R.layout.list_item_fancy_place, fancyPlaces);
 
         ImageFile.curAppContext = curAppContext;
 
@@ -119,6 +121,10 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
+        // set current menu
+        curState.curMenu = R.menu.menu_main_window;
+
+
         // handle sharing data
         /*
         Uri uri = getIntent().getData();
@@ -132,7 +138,8 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         ArrayList<TabItem> tabList = new ArrayList<>();
 
         // add to list
-        tabList.add(FPListView.newInstance());
+        fpListView = FPListView.newInstance();
+        tabList.add(fpListView);
         tabList.add(FPOsmDroidView.newInstance());
         return tabList;
     }
@@ -307,7 +314,6 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             }
             inputStream.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -322,17 +328,63 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+
+        getMenuInflater().inflate(curState.curMenu, menu);
+
+        if (curState.curMenu == R.menu.menu_main_window_multi_select) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("");
+        } else if (curState.curMenu == R.menu.menu_main_window) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setTitle(R.string.title_activity_list_fancy_places);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.main_window_about) {
+        switch (id) {
+            case android.R.id.home:
+                fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
+                return true;
+            case R.id.main_window_about:
+                showAbout();
+                return true;
 
-            showAbout();
-            return true;
+            case R.id.main_window_delete:
+                // get selected list
+                List<FancyPlace> fpList = fancyPlaceArrayAdapter.getSelectedFancyPlaces();
+
+                // delete them
+                for (int i = 0; i < fpList.size(); i++) {
+                    fancyPlaceArrayAdapter.remove(fpList.get(i));
+                    fancyPlacesDatabase.deleteFancyPlace(fpList.get(i), true);
+                }
+
+                fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
+                return true;
+
+            case R.id.main_window_share:
+                // todo: share selected
+                return true;
         }
+
         return false;
+    }
+
+    @Override
+    public void onListModeChange(int newMode) {
+        if (newMode == IOnListModeChangeListener.MODE_NORMAL)
+            curState.curMenu = R.menu.menu_main_window;
+        else if (newMode == IOnListModeChangeListener.MODE_MULTI_SELECT)
+            curState.curMenu = R.menu.menu_main_window_multi_select;
+
+        invalidateOptionsMenu();
+
     }
 }

@@ -54,7 +54,6 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
 
     @Override
     public String getTitle(Context context) {
-
         return context.getString(R.string.fp_map_view_title);
     }
 
