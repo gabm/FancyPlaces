@@ -20,12 +20,8 @@ package com.gabm.fancyplaces.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.gabm.fancyplaces.R;
 import com.gabm.fancyplaces.data.FancyPlace;
@@ -37,10 +33,6 @@ import com.gabm.fancyplaces.functional.ImageFileLoaderTask;
 public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedListener {
 
     private Bitmap thumbnail;
-    private ImageView thumbnailView;
-    private TextView titleTextView;
-    private LinearLayout backgroundLayoutView;
-    private Context curContext;
 
     private boolean selected = false;
     private boolean selectable = false;
@@ -48,27 +40,49 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
     private Animation animationBegin;
     private Animation animationEnd;
 
+    private ListViewItemHolder curHolder;
+    private Context curContext;
+    private FancyPlace curFancyPlace;
 
-    public ListViewItem(Context context, View v) {
-        thumbnailView = (ImageView)v.findViewById(R.id.li_fp_thumbnail);
-        titleTextView = (TextView)v.findViewById(R.id.li_fp_title);
-        backgroundLayoutView = (LinearLayout) v.findViewById(R.id.li_background);
+    public ListViewItem(Context context, ListViewItemHolder holder) {
+
         curContext = context;
+        curHolder = holder;
+
 
         animationBegin = AnimationUtils.loadAnimation(context, R.anim.to_middle);
         animationEnd = AnimationUtils.loadAnimation(context, R.anim.from_middle);
 
-        thumbnail = ((BitmapDrawable)thumbnailView.getDrawable()).getBitmap();
+        thumbnail = ((BitmapDrawable) curHolder.thumbnailView.getDrawable()).getBitmap();
+    }
+
+    public void setHolder(ListViewItemHolder holder) {
+        curHolder = holder;
+        updateContent();
     }
 
     public void setFancyPlace(FancyPlace fancyPlace)
     {
-        titleTextView.setText(fancyPlace.getTitle());
+        curFancyPlace = fancyPlace;
 
-        ImageFileLoaderTask backgroundTask = new ImageFileLoaderTask(thumbnailView, this);
-
-        if (fancyPlace.getImage().exists())
+        if (fancyPlace.getImage().exists()) {
+            ImageFileLoaderTask backgroundTask = new ImageFileLoaderTask(this);
             backgroundTask.execute(fancyPlace.getImage());
+        }
+
+        setSelected(isSelected());
+    }
+
+    protected void updateContent() {
+        curHolder.titleTextView.setText(curFancyPlace.getTitle());
+
+        if (selected) {
+            curHolder.backgroundLayoutView.setBackgroundColor(curContext.getResources().getColor(R.color.ColorBackgroundAccent));
+            curHolder.thumbnailView.setImageResource(R.drawable.ic_done_white_48dp);
+        } else {
+            curHolder.backgroundLayoutView.setBackgroundColor(curContext.getResources().getColor(R.color.ColorBackground));
+            curHolder.thumbnailView.setImageBitmap(thumbnail);
+        }
     }
 
     public boolean isSelectable()
@@ -102,19 +116,14 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
     {
         selected = _selected;
 
-        if (selected) {
-            backgroundLayoutView.setBackgroundColor(curContext.getResources().getColor(R.color.ColorBackgroundAccent));
-            thumbnailView.setImageResource(R.drawable.ic_done_white_48dp);
-        } else {
-            backgroundLayoutView.setBackgroundColor(curContext.getResources().getColor(R.color.ColorBackground));
-            thumbnailView.setImageBitmap(thumbnail);
-        }
+
+        updateContent();
     }
 
     private void startTogglingWithAnimation() {
-        thumbnailView.clearAnimation();
-        thumbnailView.setAnimation(animationBegin);
-        thumbnailView.startAnimation(animationBegin);
+        curHolder.thumbnailView.clearAnimation();
+        curHolder.thumbnailView.setAnimation(animationBegin);
+        curHolder.thumbnailView.startAnimation(animationBegin);
 
         Animation.AnimationListener animListener;
         animListener = new FlipAnimationListener();
@@ -126,6 +135,7 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
     @Override
     public void onImageLoaderCompleted(Bitmap bitmap) {
         thumbnail = bitmap;
+        updateContent();
     }
 
 
@@ -146,11 +156,11 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
             if (animation == animationBegin) {
                 setSelected(!isSelected());
 
-                thumbnailView.clearAnimation();
-                thumbnailView.setAnimation(animationEnd);
-                thumbnailView.startAnimation(animationEnd);
+                curHolder.thumbnailView.clearAnimation();
+                curHolder.thumbnailView.setAnimation(animationEnd);
+                curHolder.thumbnailView.startAnimation(animationEnd);
             } else {
-                thumbnailView.clearAnimation();
+                curHolder.thumbnailView.clearAnimation();
             }
         }
     }

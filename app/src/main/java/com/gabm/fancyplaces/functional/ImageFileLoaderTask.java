@@ -19,26 +19,17 @@ package com.gabm.fancyplaces.functional;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.widget.ImageView;
 
 import com.gabm.fancyplaces.data.ImageFile;
-
-import java.lang.ref.WeakReference;
 
 /**
  * Created by gabm on 20/05/15.
  */
 public class ImageFileLoaderTask extends AsyncTask<ImageFile, Void, Bitmap> {
-    private final WeakReference<ImageView> imageViewReference;
     private OnImageLoaderCompletedListener onImageLoaderCompletedListener = null;
 
-    public interface OnImageLoaderCompletedListener {
-        void onImageLoaderCompleted(Bitmap bitmap);
-    }
-
-    public ImageFileLoaderTask(ImageView imageView, OnImageLoaderCompletedListener imageLoaderCompletedListener) {
+    public ImageFileLoaderTask(OnImageLoaderCompletedListener imageLoaderCompletedListener) {
         // Use a WeakReference to ensure the ImageView can be garbage collected
-        imageViewReference = new WeakReference<>(imageView);
         onImageLoaderCompletedListener = imageLoaderCompletedListener;
     }
 
@@ -51,15 +42,14 @@ public class ImageFileLoaderTask extends AsyncTask<ImageFile, Void, Bitmap> {
     // Once complete, see if ImageView is still around and set bitmap.
     @Override
     protected void onPostExecute(Bitmap bitmap) {
-        if (imageViewReference != null && bitmap != null) {
-            final ImageView imageView = imageViewReference.get();
-
-            if (imageView != null) {
-                imageView.setImageBitmap(bitmap);
-            }
+        if (bitmap != null) {
 
             if (onImageLoaderCompletedListener != null)
                 onImageLoaderCompletedListener.onImageLoaderCompleted(bitmap);
         }
+    }
+
+    public interface OnImageLoaderCompletedListener {
+        void onImageLoaderCompleted(Bitmap bitmap);
     }
 }

@@ -21,10 +21,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -35,6 +32,9 @@ import com.gabm.fancyplaces.functional.IOnListModeChangeListener;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 import com.melnykov.fab.FloatingActionButton;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by gabm on 15/05/15.
  */
@@ -43,7 +43,7 @@ public class FPListView extends TabItem {
     private OnFancyPlaceSelectedListener fancyPlaceSelectedCallback = null;
     private ListView fancyPlacesList = null;
     private MainWindow parent = null;
-    private IOnListModeChangeListener onListModeChangeListener = null;
+    private List<IOnListModeChangeListener> onListModeChangeListeners = new ArrayList<>();
 
 
 
@@ -71,15 +71,12 @@ public class FPListView extends TabItem {
             }
         });
 
-        //registerForContextMenu(fancyPlacesList);
 
         // set adapter
         fancyPlacesList.setAdapter(parent.fancyPlaceArrayAdapter);
-        //fancyPlacesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         // add on mode change listener
-        onListModeChangeListener = parent.fancyPlaceArrayAdapter;
-
+        onListModeChangeListeners.add(parent.fancyPlaceArrayAdapter);
         changeListMode(IOnListModeChangeListener.MODE_NORMAL);
 
         return v;
@@ -91,6 +88,8 @@ public class FPListView extends TabItem {
 
         try {
             fancyPlaceSelectedCallback = (MainWindow) activity;
+            onListModeChangeListeners.add((MainWindow) activity);
+
             parent = (MainWindow) activity;
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,36 +101,8 @@ public class FPListView extends TabItem {
         return context.getString(R.string.fp_list_view_title);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-
-        menu.setHeaderTitle(parent.fancyPlaceArrayAdapter.getItem(info.position).getTitle());
-
-        String[] menuItems = {getString(R.string.context_menu_delete)/*, getString(R.string.context_menu_share)*/, "Export to GPX"};
-
-        for (int i = 0; i < menuItems.length; i++) {
-            menu.add(Menu.NONE, i, i, menuItems[i]);
-        }
-
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int menuItemIndex = item.getItemId();
-
-        if (menuItemIndex == 0) {
-            // delete
-            fancyPlaceSelectedCallback.onFancyPlaceSelected(info.position, OnFancyPlaceSelectedListener.INTENT_DELETE);
-        } else if (menuItemIndex == 1) {
-            // share
-            //fancyPlaceSelectedCallback.onFancyPlaceSelected(info.position, OnFancyPlaceSelectedListener.INTENT_SHARE);
-            fancyPlaceSelectedCallback.onFancyPlaceSelected(info.position, OnFancyPlaceSelectedListener.INTENT_EXPORT_TO_GPX);
-        }
-        return true;
+    public void setMultiSelectMode(int newMode) {
+        changeListMode(newMode);
     }
 
     protected void changeListMode(int newMode) {
@@ -164,7 +135,11 @@ public class FPListView extends TabItem {
             fancyPlacesList.setOnItemLongClickListener(null);
         }
 
-        onListModeChangeListener.onListModeChange(newMode);
+        notifyListeners(newMode);
     }
 
+    protected void notifyListeners(int newMode) {
+        for (int i = 0; i < onListModeChangeListeners.size(); i++)
+            onListModeChangeListeners.get(i).onListModeChange(newMode);
+    }
 }
