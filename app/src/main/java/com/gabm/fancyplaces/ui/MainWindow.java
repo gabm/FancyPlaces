@@ -79,11 +79,9 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
 
-        String debugTitle = getResources().getString(R.string.debug_title);
-        if (!debugTitle.equals(""))
-            setTitle(debugTitle);
-
         curAppContext = (FancyPlacesApplication) getApplicationContext();
+
+        setDefaultTitle();
 
         // inflate toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_window_toolbar);
@@ -124,15 +122,14 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
         // set current menu
         curState.curMenu = R.menu.menu_main_window;
+    }
 
-
-        // handle sharing data
-        /*
-        Uri uri = getIntent().getData();
-        if (uri != null) {
-            FancyPlace fp = FancyPlace.loadFromFile(getContentResolver(), uri);
-            showSEPActivityForResult(getApplicationContext(), fp, ShowEditPlace.MODE_PREVIEW);
-        }*/
+    protected void setDefaultTitle() {
+        String debugTitle = getResources().getString(R.string.debug_title);
+        if (!debugTitle.equals(""))
+            setTitle(debugTitle);
+        else
+            setTitle(getResources().getString(R.string.title_activity_list_fancy_places));
     }
 
     private List<TabItem> createTabList() {
@@ -353,7 +350,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
         } else if (curState.curMenu == R.menu.menu_main_window) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            toolbar.setTitle(R.string.title_activity_list_fancy_places);
+            setDefaultTitle();
             toolbar.setBackgroundColor(getResources().getColor(R.color.ColorPrimary));
         }
 
