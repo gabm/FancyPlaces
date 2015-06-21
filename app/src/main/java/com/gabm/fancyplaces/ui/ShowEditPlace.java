@@ -309,11 +309,12 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
             curMenu.findItem(R.id.sep_action_edit).setVisible(true);
             curMenu.findItem(R.id.sep_action_confirm).setVisible(false);
             curMenu.findItem(R.id.sep_show_on_map).setVisible(true);
+            curMenu.findItem(R.id.sep_action_take_image).setVisible(false);
         } else {
             curMenu.findItem(R.id.sep_action_edit).setVisible(false);
             curMenu.findItem(R.id.sep_action_confirm).setVisible(true);
             curMenu.findItem(R.id.sep_show_on_map).setVisible(false);
-
+            curMenu.findItem(R.id.sep_action_take_image).setVisible(true);
         }
     }
 
@@ -390,6 +391,15 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
                 startActivity(intent);
                 break;
+            case R.id.sep_action_take_image:
+                // create Intent to take a picture and return control to the calling application
+                Intent cam_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                cam_intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.parse("file://" + currentState.data.getImage().getFileName())); // set the image file name
+
+
+                // start the image capture Intent
+                startActivityForResult(cam_intent, REQUEST_IMAGE_CAPTURE);
+                break;
             case android.R.id.home:
                 onBackPressed();
                 return true;
@@ -446,18 +456,6 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.sep_image:
-                if (currentState.mode == MODE_VIEW)
-                    return;
-
-                // create Intent to take a picture and return control to the calling application
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.parse("file://" + currentState.data.getImage().getFileName())); // set the image file name
-
-
-                // start the image capture Intent
-                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                break;
             case R.id.sep_map_update_button:
                 locationHandler.updateLocation(true);
                 break;
@@ -482,7 +480,6 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
             currentState.data.setLocationLat(String.valueOf(location.getLatitude()));
             currentState.data.setLocationLong(String.valueOf(location.getLongitude()));
 
-            onLocationChanged(LOCATION_CHANGED_GPS);
             onLocationChanged(LOCATION_CHANGED_GPS);
         }
     }

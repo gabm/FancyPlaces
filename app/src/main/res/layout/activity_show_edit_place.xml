@@ -23,7 +23,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/top_image"
                 android:background="#ff828282"
-                android:onClick="onClick"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_camera_grey600_48dp" />
 
