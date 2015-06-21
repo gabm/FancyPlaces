@@ -429,6 +429,17 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         return false;
     }
 
+
+    @Override
+    public void onBackPressed() {
+        if (curState.curMenu == R.menu.menu_main_window_multi_select) {
+            // set mode back to normal mode
+            fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     @Override
     public void onListModeChange(int newMode) {
         if (newMode == IOnListModeChangeListener.MODE_NORMAL)
