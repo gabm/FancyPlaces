@@ -24,7 +24,7 @@
                 android:layout_height="@dimen/top_image"
                 android:background="#ff828282"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_camera_grey600_48dp" />
+                android:src="@drawable/ic_camera_grey_full_size" />
 
             <LinearLayout
                 android:id="@+id/sep_main_area"
