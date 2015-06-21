@@ -23,4 +23,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="alert_discard_changes">Going back will discard any changes you made. Do you want to proceed?</string>
+    <string name="gpx_export_sucessful">"File successfully exported to: "</string>
+    <string name="gpx_export_failed">GPX export failed!</string>
 </resources>
