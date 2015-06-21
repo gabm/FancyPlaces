@@ -5,12 +5,14 @@ Well, then this App is for you: It lets you create a georeferenced list of your 
 
 ## Current Project Status
 
-* Upcoming release: v1.2.0 (*wip*), which will include
+Upcoming release: v1.2.0 (*wip*), which will include
 	* GPX Export
 	* Updated languages thanks to the contributors
 	* Multi Selection Mode
 	* Bug Fixes
-* Latest stable release v1.1.0
+
+
+Latest stable release: v1.1.0
 
 
 ## Availability
