@@ -52,7 +52,6 @@
 
         <activity
             android:name=".ui.ShowEditPlace"
-            android:label="@string/title_activity_show_edit_place"
             android:parentActivityName=".ui.MainWindow"
             android:windowSoftInputMode="adjustResize">
             <meta-data

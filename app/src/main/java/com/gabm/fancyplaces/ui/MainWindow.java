@@ -412,7 +412,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 (new File(folderName)).mkdirs();
 
                 if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile, null)) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_sucessful) + exportFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_successful) + exportFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_failed), Toast.LENGTH_LONG).show();
 
