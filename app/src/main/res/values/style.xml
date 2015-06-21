@@ -12,4 +12,13 @@
 
 
     </style>
+
+    <style name="FPAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/ColorAccent</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <!-- Used for the background -->
+        <item name="android:background">@color/ColorPrimaryDark</item>
+    </style>
 </resources>

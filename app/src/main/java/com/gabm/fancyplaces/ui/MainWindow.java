@@ -18,6 +18,7 @@
 package com.gabm.fancyplaces.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -375,16 +376,36 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
             case R.id.main_window_delete:
                 // get selected list
-                List<FancyPlace> fpList = fancyPlaceArrayAdapter.getSelectedFancyPlaces();
+                final List<FancyPlace> fpList = fancyPlaceArrayAdapter.getSelectedFancyPlaces();
 
-                // delete them
-                for (int i = 0; i < fpList.size(); i++) {
-                    fancyPlaceArrayAdapter.remove(fpList.get(i));
-                    fancyPlacesDatabase.deleteFancyPlace(fpList.get(i), true);
-                }
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                // delete them
+                                for (int i = 0; i < fpList.size(); i++) {
+                                    fancyPlaceArrayAdapter.remove(fpList.get(i));
+                                    fancyPlacesDatabase.deleteFancyPlace(fpList.get(i), true);
+                                }
 
-                // set mode back to normal
-                fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
+                                // set mode back to normal
+                                fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.FPAlertDialogStyle);
+                builder.setMessage(R.string.alert_want_to_delete)
+                        .setPositiveButton(R.string.yes, dialogClickListener)
+                        .setNegativeButton(R.string.no, dialogClickListener)
+                        .show();
+
                 return true;
 
             case R.id.main_window_share:
