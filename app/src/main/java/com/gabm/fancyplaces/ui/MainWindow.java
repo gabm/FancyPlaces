@@ -333,12 +333,27 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
         getMenuInflater().inflate(curState.curMenu, menu);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_window_toolbar);
         if (curState.curMenu == R.menu.menu_main_window_multi_select) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("");
+            toolbar.setTitle(getString(R.string.main_multi_selection_title));
+            toolbar.setBackgroundColor(getResources().getColor(R.color.ColorPrimaryDark));
+            int noOfChild = toolbar.getChildCount();
+            View view;
+
+            // animate toolbar elements
+            for (int i = 1; i < noOfChild; i++) {
+                view = toolbar.getChildAt(i);
+                view.setAlpha(0);
+                view.setScaleY(0);
+                view.setPivotY((float) 0.5 * view.getHeight());
+                view.animate().setDuration(200).scaleY(1).alpha(1);
+            }
+
         } else if (curState.curMenu == R.menu.menu_main_window) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            getSupportActionBar().setTitle(R.string.title_activity_list_fancy_places);
+            toolbar.setTitle(R.string.title_activity_list_fancy_places);
+            toolbar.setBackgroundColor(getResources().getColor(R.color.ColorPrimary));
         }
 
         return super.onPrepareOptionsMenu(menu);
@@ -350,8 +365,10 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
         switch (id) {
             case android.R.id.home:
+                // set mode back to normal
                 fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
                 return true;
+
             case R.id.main_window_about:
                 showAbout();
                 return true;
@@ -366,11 +383,23 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                     fancyPlacesDatabase.deleteFancyPlace(fpList.get(i), true);
                 }
 
+                // set mode back to normal
                 fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
                 return true;
 
             case R.id.main_window_share:
-                // todo: share selected
+                GPXExporter exporter = new GPXExporter();
+                File exportFile = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "export.gpx");
+
+                if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile, null)) {
+                    Toast.makeText(getApplicationContext(), "File successfully exported to: " + FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "export.gpx", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "File export failed!", Toast.LENGTH_LONG).show();
+
+                }
+
+                // set mode back to normal
+                fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
                 return true;
         }
 

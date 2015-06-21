@@ -17,6 +17,8 @@
 
 package com.gabm.fancyplaces.functional;
 
+import android.os.Build;
+
 import com.gabm.fancyplaces.data.FancyPlace;
 
 import java.io.File;
@@ -26,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 
 /**
@@ -59,11 +62,12 @@ public class GPXExporter implements IExporter {
      * @param target    Target GPX file
      * @throws IOException
      */
-    public void writeGpxFile(String trackName, List<FancyPlace> fpList, File target) throws IOException {
+    public void writeGpxFile(List<FancyPlace> fpList, File target) throws IOException {
         FileWriter fw = new FileWriter(target);
 
         fw.write(XML_HEADER + "\n");
         fw.write(TAG_GPX + "\n");
+        fw.write(getMetaData() + "\n");
 
         //writeTrackPoints(trackName, fw, cTrackPoints);
         writeWayPoints(fw, fpList);
@@ -73,6 +77,13 @@ public class GPXExporter implements IExporter {
         fw.close();
     }
 
+    public String getMetaData() {
+        return "<metadata>\n" +
+                "\t<author>\n" +
+                "\t\t<name>" + Build.MANUFACTURER + " " + Build.MODEL + "</name>\n" +
+                "\t</author>\n" +
+                "</metadata>";
+    }
 
     /**
      * Iterates on way points and write them.
@@ -83,6 +94,8 @@ public class GPXExporter implements IExporter {
      */
     public void writeWayPoints(FileWriter fw, List<FancyPlace> fpList) throws IOException {
 
+        POINT_DATE_FORMATTER.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         for (int i = 0; i < fpList.size(); i++) {
             FancyPlace curFancyPlace = fpList.get(i);
 
@@ -90,8 +103,13 @@ public class GPXExporter implements IExporter {
             out.append("\t"
                     + "<wpt lat=\"" + curFancyPlace.getLocationLat() + "\" "
                     + "lon=\"" + curFancyPlace.getLocationLong() + "\">" + "\n");
+
             out.append("\t\t" + "<time>" + POINT_DATE_FORMATTER.format(new Date()) + "</time>" + "\n");
             out.append("\t\t" + "<name>" + curFancyPlace.getTitle() + "</name>" + "\n");
+
+            if (!curFancyPlace.getNotes().equals(""))
+                out.append("\t\t" + "<desc>" + curFancyPlace.getTitle() + "</desc>" + "\n");
+
             out.append("\t" + "</wpt>" + "\n");
 
             fw.write(out.toString());
@@ -103,7 +121,7 @@ public class GPXExporter implements IExporter {
 
         boolean success = false;
         try {
-            writeGpxFile(targetName.getName(), fpList, targetName);
+            writeGpxFile(fpList, targetName);
             success = true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,7 +139,7 @@ public class GPXExporter implements IExporter {
 
         boolean success = false;
         try {
-            writeGpxFile(target.getName(), fpList, target);
+            writeGpxFile(fpList, target);
             success = true;
         } catch (IOException e) {
             e.printStackTrace();

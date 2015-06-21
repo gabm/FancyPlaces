@@ -18,4 +18,5 @@
     <string name="main_window_about">About</string>
     <string name="sep_action_confirm_title">Save</string>
     <string name="sep_action_edit_title">Edit</string>
+    <string name="main_multi_selection_title">Select...</string>
 </resources>
