@@ -408,7 +408,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             case R.id.main_window_share:
                 GPXExporter exporter = new GPXExporter();
                 String folderName = FancyPlacesApplication.EXTERNAL_EXPORT_DIR + shuffleFileName("Export_", "");
-                File exportFile = new File(folderName + File.separator + "export.gpx");
+                File exportFile = new File(folderName + File.separator + "FancyPlaces.gpx");
                 (new File(folderName)).mkdirs();
 
                 if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile, null)) {
