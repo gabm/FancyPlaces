@@ -215,11 +215,11 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         startActivityForResult(intent, REQUEST_SHOW_EDIT_PLACE);
     }
 
-    private String shuffleFileName() {
+    private String shuffleFileName(String prefix, String suffix) {
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
-        return "IMG_" + timeStamp + ".png";
+        return prefix + timeStamp + suffix;
     }
 
 
@@ -243,7 +243,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
             if (resultCode == ShowEditPlace.RESULT_DATA_CHANGED) {
                 // move image to appropriate location
-                fancyPlace.setImage(fancyPlace.getImage().copy(getFilesDir().getAbsolutePath() + File.separator + shuffleFileName()));
+                fancyPlace.setImage(fancyPlace.getImage().copy(getFilesDir().getAbsolutePath() + File.separator + shuffleFileName("IMG_", ".png")));
                 if (curState.OriginalImageFile != null)
                     curState.OriginalImageFile.delete();
 
@@ -389,7 +389,9 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
             case R.id.main_window_share:
                 GPXExporter exporter = new GPXExporter();
-                File exportFile = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "export.gpx");
+                String folderName = FancyPlacesApplication.EXTERNAL_EXPORT_DIR + shuffleFileName("Export_", "");
+                File exportFile = new File(folderName + File.separator + "export.gpx");
+                (new File(folderName)).mkdirs();
 
                 if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile, null)) {
                     Toast.makeText(getApplicationContext(), "File successfully exported to: " + FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "export.gpx", Toast.LENGTH_LONG).show();

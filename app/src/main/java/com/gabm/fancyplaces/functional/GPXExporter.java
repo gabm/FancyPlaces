@@ -54,23 +54,16 @@ public class GPXExporter implements IExporter {
      */
     private static final SimpleDateFormat POINT_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-    /**
-     * Writes the GPX file
-     *
-     * @param trackName Name of the GPX track (metadata)
-     * @param fpList    FpList
-     * @param target    Target GPX file
-     * @throws IOException
-     */
+
     public void writeGpxFile(List<FancyPlace> fpList, File target) throws IOException {
         FileWriter fw = new FileWriter(target);
+        String folder = target.getParent();
 
         fw.write(XML_HEADER + "\n");
         fw.write(TAG_GPX + "\n");
         fw.write(getMetaData() + "\n");
 
-        //writeTrackPoints(trackName, fw, cTrackPoints);
-        writeWayPoints(fw, fpList);
+        writeWayPoints(fw, folder, fpList);
 
         fw.write("</gpx>");
 
@@ -85,16 +78,11 @@ public class GPXExporter implements IExporter {
                 "</metadata>";
     }
 
-    /**
-     * Iterates on way points and write them.
-     *
-     * @param fw     Writer to the target file.
-     * @param fpList Cursor to way points.
-     * @throws IOException
-     */
-    public void writeWayPoints(FileWriter fw, List<FancyPlace> fpList) throws IOException {
+
+    public void writeWayPoints(FileWriter fw, String folder, List<FancyPlace> fpList) throws IOException {
 
         POINT_DATE_FORMATTER.setTimeZone(TimeZone.getTimeZone("UTC"));
+
 
         for (int i = 0; i < fpList.size(); i++) {
             FancyPlace curFancyPlace = fpList.get(i);
@@ -104,11 +92,18 @@ public class GPXExporter implements IExporter {
                     + "<wpt lat=\"" + curFancyPlace.getLocationLat() + "\" "
                     + "lon=\"" + curFancyPlace.getLocationLong() + "\">" + "\n");
 
-            out.append("\t\t" + "<time>" + POINT_DATE_FORMATTER.format(new Date()) + "</time>" + "\n");
-            out.append("\t\t" + "<name>" + curFancyPlace.getTitle() + "</name>" + "\n");
+            out.append("\t\t<time>" + POINT_DATE_FORMATTER.format(new Date()) + "</time>\n");
+            out.append("\t\t<name>" + curFancyPlace.getTitle() + "</name>\n");
 
             if (!curFancyPlace.getNotes().equals(""))
-                out.append("\t\t" + "<desc>" + curFancyPlace.getTitle() + "</desc>" + "\n");
+                out.append("\t\t<desc>" + curFancyPlace.getTitle() + "</desc>\n");
+
+            if (curFancyPlace.getImage().exists()) {
+                String fileName = i + "_" + curFancyPlace.getTitle().replaceAll(" ", "_") + ".png";
+                curFancyPlace.getImage().copy(folder + File.separator + fileName);
+                out.append("\t\t<link  href=\"file://" + fileName + "\" />\n");
+            }
+
 
             out.append("\t" + "</wpt>" + "\n");
 
