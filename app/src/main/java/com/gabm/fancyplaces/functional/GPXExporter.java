@@ -96,7 +96,7 @@ public class GPXExporter implements IExporter {
             out.append("\t\t<name>" + curFancyPlace.getTitle() + "</name>\n");
 
             if (!curFancyPlace.getNotes().equals(""))
-                out.append("\t\t<desc>" + curFancyPlace.getTitle() + "</desc>\n");
+                out.append("\t\t<desc>" + curFancyPlace.getNotes() + "</desc>\n");
 
             if (curFancyPlace.getImage().exists()) {
                 String fileName = i + "_" + curFancyPlace.getTitle().replaceAll(" ", "_") + ".png";
