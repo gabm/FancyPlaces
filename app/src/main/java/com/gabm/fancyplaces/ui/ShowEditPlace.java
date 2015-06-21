@@ -19,6 +19,7 @@ package com.gabm.fancyplaces.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
@@ -108,8 +109,14 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         // inflate toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.sep_toolbar);
 
-        final ColorDrawable cd = new ColorDrawable(getResources().getColor(R.color.ColorPrimary));
-        cd.setAlpha(0);
+        final float[] hsv = new float[3];
+        Color.colorToHSV(getResources().getColor(R.color.ColorPrimary), hsv);
+        final float orig_hsv_value = hsv[2];
+        hsv[2] = 0;
+
+        final ColorDrawable cd = new ColorDrawable(Color.HSVToColor(hsv));
+        cd.setAlpha(40);
+
         toolbar.setBackground(cd);
 
         if (Build.VERSION.SDK_INT >= 19) {
@@ -124,6 +131,8 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         currentViewElements.scrollView.setScrollViewListener(new ScrollViewListener() {
             @Override
             public void onScrollChanged(ObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
+                hsv[2] = getHSVValueForView(scrollView.getScrollY(), orig_hsv_value);
+                cd.setColor(Color.HSVToColor(hsv));
                 cd.setAlpha(getAlphaForView(scrollView.getScrollY()));
                 currentViewElements.imageView.setTranslationY(scrollView.getScrollY() * 0.25f);
 
@@ -131,10 +140,25 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         });
     }
 
+    private float getHSVValueForView(int position, float maxHSVValue) {
+        int imageHeight = findViewById(R.id.sep_image).getLayoutParams().height - curAppContext.getStatusBarHeight() - findViewById(R.id.sep_toolbar).getHeight();
+        float minHSVValue = 0.0f;
+        float hsvValue = minHSVValue; // min alpha
+
+        if (position > imageHeight)
+            hsvValue = maxHSVValue;
+        else if (position < 0)
+            hsvValue = minHSVValue;
+        else {
+            hsvValue += (((float) position) / imageHeight) * (maxHSVValue - minHSVValue);
+        }
+
+        return hsvValue;
+    }
 
     private int getAlphaForView(int position) {
         int imageHeight = findViewById(R.id.sep_image).getLayoutParams().height - curAppContext.getStatusBarHeight() - findViewById(R.id.sep_toolbar).getHeight();
-        float minAlpha = 0.0f, maxAlpha = 255f;
+        float minAlpha = 40.0f, maxAlpha = 255f;
         float alpha = minAlpha; // min alpha
 
         if (position > imageHeight)
@@ -145,7 +169,6 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
             alpha += (((float) position) / imageHeight) * (maxAlpha - minAlpha);
         }
 
-        // Log.d("", "pos " + position + " alpha " + (int)((alpha)) + " height " + imageHeight);
         return (int) (alpha);
     }
 
