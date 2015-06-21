@@ -17,6 +17,7 @@
 
 package com.gabm.fancyplaces.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
@@ -24,6 +25,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -335,43 +337,73 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.sep_action_edit) {
-            currentState.mode = MODE_EDIT;
+        switch (id) {
+            case R.id.sep_action_edit:
+                currentState.mode = MODE_EDIT;
 
-            onActivityModeChanged();
-            updateMenuItemVisibility();
+                onActivityModeChanged();
+                updateMenuItemVisibility();
 
-            return true;
-        } else if (id == R.id.sep_action_confirm) {
-            saveInputFieldsToState();
-            if (!currentState.data.isValid())
-            {
-                Toast.makeText(this, R.string.error_saving, Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.sep_action_confirm:
+                saveInputFieldsToState();
+                if (!currentState.data.isValid()) {
+                    Toast.makeText(this, R.string.error_saving, Toast.LENGTH_SHORT).show();
 
-                return false;
-            }
+                    return false;
+                }
 
-            currentState.result_code = RESULT_DATA_CHANGED;
-            finish();
+                currentState.result_code = RESULT_DATA_CHANGED;
+                finish();
+                break;
+            case R.id.sep_show_on_map:
+                final FancyPlace curFP = currentState.data;
+                String loc = curFP.getLocationLat() + "," + curFP.getLocationLong();
+                String uriString =
+                        "geo:" + loc + "?q="
+                                + loc + "(" + curFP.getTitle() + ")&d="
+                                + curFP.getNotes();
 
-            return true;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+                startActivity(intent);
+                break;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
 
-        } else if (id == R.id.sep_show_on_map) {
-            final FancyPlace curFP = currentState.data;
-            String loc = curFP.getLocationLat() + "," + curFP.getLocationLong();
-            String uriString =
-                    "geo:" + loc + "?q="
-                            + loc + "(" + curFP.getTitle() + ")&d="
-                            + curFP.getNotes();
-
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
-            startActivity(intent);
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
+    public void onBackPressed() {
+        if (currentState.mode == MODE_EDIT) {
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case DialogInterface.BUTTON_POSITIVE:
+                            // Go back
+                            ShowEditPlace.super.onBackPressed();
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            //No button clicked
+                            break;
+                    }
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.FPAlertDialogStyle);
+            builder.setMessage(R.string.alert_discard_changes)
+                    .setPositiveButton(R.string.yes, dialogClickListener)
+                    .setNegativeButton(R.string.no, dialogClickListener)
+                    .show();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     public void finish() {
         Bundle conData = new Bundle();
         conData.putParcelable("data", currentState.data);
