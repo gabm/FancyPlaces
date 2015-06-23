@@ -78,7 +78,7 @@ public class ListViewItem implements ImageFileLoaderTask.OnImageLoaderCompletedL
 
         if (selected) {
             curHolder.backgroundLayoutView.setBackgroundColor(curContext.getResources().getColor(R.color.ColorBackgroundAccent));
-            curHolder.thumbnailView.setImageResource(R.drawable.ic_camera_grey600_48dp);
+            curHolder.thumbnailView.setImageResource(R.drawable.ic_done_white_48dp);
         } else {
             curHolder.backgroundLayoutView.setBackgroundColor(curContext.getResources().getColor(R.color.ColorBackground));
             curHolder.thumbnailView.setImageBitmap(thumbnail);
