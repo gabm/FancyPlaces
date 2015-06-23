@@ -27,27 +27,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <data
-                    android:host="*"
-                    android:mimeType="application/octet-stream"
-                    android:pathPattern=".*\\.fancyplace" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <data
-                    android:host="*"
-                    android:mimeType="application/fancyplace"
-                    android:pathPattern=".*\\.fancyplace" />
-            </intent-filter>
         </activity>
 
         <activity
