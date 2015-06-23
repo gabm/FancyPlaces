@@ -101,7 +101,7 @@ public class GPXExporter implements IExporter {
             if (curFancyPlace.getImage().exists()) {
                 String fileName = i + "_" + curFancyPlace.getTitle().replaceAll(" ", "_") + ".png";
                 curFancyPlace.getImage().copy(folder + File.separator + fileName);
-                out.append("\t\t<link  href=\"file://" + fileName + "\" />\n");
+                out.append("\t\t<link  href=\"file:" + fileName + "\" />\n");
             }
 
 
