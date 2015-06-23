@@ -49,6 +49,9 @@ import com.gabm.fancyplaces.functional.ScrollViewListener;
 
 import org.osmdroid.views.MapView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 
 public class ShowEditPlace extends AppCompatActivity implements LocationHandler.OnLocationUpdatedListener {
 
@@ -383,13 +386,18 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
             case R.id.sep_show_on_map:
                 final FancyPlace curFP = currentState.data;
                 String loc = curFP.getLocationLat() + "," + curFP.getLocationLong();
-                String uriString =
-                        "geo:" + loc + "?q="
-                                + loc + "(" + curFP.getTitle() + ")&d="
-                                + curFP.getNotes();
+                try {
+                    String uriString =
+                            "geo:" + loc + "?q="
+                                    + loc + "(" + URLEncoder.encode(curFP.getTitle(), "UTF-8") + ")&d="
+                                    + URLEncoder.encode(curFP.getNotes(), "UTF-8");
 
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
-                startActivity(intent);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+                    startActivity(intent);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
                 break;
             case R.id.sep_action_take_image:
                 // create Intent to take a picture and return control to the calling application
