@@ -93,13 +93,13 @@ public class GPXExporter implements IExporter {
                     + "lon=\"" + curFancyPlace.getLocationLong() + "\">" + "\n");
 
             out.append("\t\t<time>" + POINT_DATE_FORMATTER.format(new Date()) + "</time>\n");
-            out.append("\t\t<name>" + curFancyPlace.getTitle() + "</name>\n");
+            out.append("\t\t<name>" + escapeXML(curFancyPlace.getTitle()) + "</name>\n");
 
             if (!curFancyPlace.getNotes().equals(""))
-                out.append("\t\t<desc>" + curFancyPlace.getNotes() + "</desc>\n");
+                out.append("\t\t<desc>" + escapeXML(curFancyPlace.getNotes()) + "</desc>\n");
 
             if (curFancyPlace.getImage().exists()) {
-                String fileName = i + "_" + curFancyPlace.getTitle().replaceAll(" ", "_") + ".png";
+                String fileName = i + ".png";
                 curFancyPlace.getImage().copy(folder + File.separator + fileName);
                 out.append("\t\t<link  href=\"file:" + fileName + "\" />\n");
             }
@@ -141,6 +141,36 @@ public class GPXExporter implements IExporter {
         }
 
         return success;
+    }
+
+    protected String escapeXML(String input) {
+        StringBuilder escapedXML = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            switch (c) {
+                case '<':
+                    escapedXML.append("&lt;");
+                    break;
+                case '>':
+                    escapedXML.append("&gt;");
+                    break;
+                case '\"':
+                    escapedXML.append("&quot;");
+                    break;
+                case '&':
+                    escapedXML.append("&amp;");
+                    break;
+                case '\'':
+                    escapedXML.append("&apos;");
+                    break;
+                default:
+                    if (c > 0x7e) {
+                        escapedXML.append("&#" + ((int) c) + ";");
+                    } else
+                        escapedXML.append(c);
+            }
+        }
+        return escapedXML.toString();
     }
 }
 
