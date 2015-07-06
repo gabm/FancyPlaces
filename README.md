@@ -5,16 +5,13 @@ Well, then this App is for you: It lets you create a georeferenced list of your 
 
 ## Current Project Status
 
-Upcoming release: v1.2.0 (*wip*), which will include
-* GPX Export
-* Updated languages thanks to the contributors
-* Multi Selection Mode
-* Bug Fixes
+Upcoming release: v1.2.1 (*wip*), which will include
+* updated translations
+* new translations (turkish, portuguese, malay)
 
+Latest stable release: v1.2.0
 
-Latest stable release: v1.1.0
-
-
+The full Changelog can be found [here](Changelog.md).
 ## Availability
 There are several ways of obtaining **FancyPlaces**:
 * the prefered way of obtaining **FancyPlaces** is through [F-Droid](https://f-droid.org/repository/browse/?fdcategory=Navigation&fdid=com.gabm.fancyplaces)
@@ -37,6 +34,9 @@ Currently we have:
 - Catalan (credits: sancv4, v1.2.0+)
 - Spanish (credits: sancv4, v1.2.0+)
 - Dutch (credits: YarrHarr, v1.2.0+)
+- Portuguese (credits: Marco Magalhães, v1.2.1+)
+- Malay (credits: bornd, v1.2.1+)
+- Turkish (credits: Tigerider/hbu, v1.2.1+)
 
 ## License
 This program is licensed under GPLv3 and the whole source code is available on github.
