@@ -46,8 +46,14 @@ public class LocationHandler implements LocationListener, Application.ActivityLi
     public LocationHandler(android.location.LocationManager locationManager) {
         curLocationManager = locationManager;
 
-        relevantLocationProviders.add(LocationManager.NETWORK_PROVIDER);
-        relevantLocationProviders.add(LocationManager.GPS_PROVIDER);
+
+        List<String> availableProviders = locationManager.getAllProviders();
+
+        if (availableProviders.contains(LocationManager.NETWORK_PROVIDER))
+            relevantLocationProviders.add(LocationManager.NETWORK_PROVIDER);
+
+        if (availableProviders.contains(LocationManager.GPS_PROVIDER))
+            relevantLocationProviders.add(LocationManager.GPS_PROVIDER);
 
         initLocation();
     }
