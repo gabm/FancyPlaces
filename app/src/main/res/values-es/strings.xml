@@ -3,7 +3,7 @@
 <resources>
   <string name="notes">Notas</string>
   <string name="context_menu_delete">Suprimir</string>
-  <string name="context_menu_gpx_export">Export to GPX</string>
+  <string name="context_menu_gpx_export">Exportar a GPX</string>
   <string name="map">Mapa</string>
   <string name="sep_update_map_button">Actualizar ubicación</string>
   <string name="updating_location">Actualizando ubicación</string>
@@ -15,11 +15,11 @@
   <string name="main_window_about">Sobre</string>
   <string name="sep_action_confirm_title">Guardar</string>
   <string name="sep_action_edit_title">Edición</string>
-  <string name="main_multi_selection_title">Select&#8230;</string>
-  <string name="alert_want_to_delete">Do you want to permanently delete these FancyPlaces?</string>
-  <string name="yes">Yes</string>
+  <string name="main_multi_selection_title">Seleccionar&#8230;</string>
+  <string name="alert_want_to_delete">¿Desea eliminar permanentemente estos FancyPlaces?</string>
+  <string name="yes">Sí</string>
   <string name="no">No</string>
-  <string name="alert_discard_changes">Going back will discard any changes you made. Do you want to proceed?</string>
-  <string name="gpx_export_successful">"File successfully exported to: "</string>
-  <string name="gpx_export_failed">GPX export failed!</string>
+  <string name="alert_discard_changes">Volver se descartarán los cambios que hiciste. ¿Desea continuar?</string>
+  <string name="gpx_export_successful">"Archivo exportado con éxito a: "</string>
+  <string name="gpx_export_failed">Error en la exportación GPX!</string>
 </resources>
