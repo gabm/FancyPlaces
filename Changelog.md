@@ -1,7 +1,7 @@
 # Changelog
 ## v1.2.2 - 13.07.2015
 * updated translations
-* Bugfix: fix crash when not all location providers are available
+* fix crash when not all location providers are available (credits: Marcus)
 
 ## v1.2.1 - 06.07.2015
 * updated translations
