@@ -1,4 +1,7 @@
 # Changelog
+## v1.2.3 - 16.11.2015
+* added italian translation (credit: eridrivic)
+
 ## v1.2.2 - 13.07.2015
 * updated translations
 * fix crash when not all location providers are available (credits: Marcus)
