@@ -267,9 +267,39 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         } else if (requestCode == REQUEST_FILE_SELECTION)
         {
             if (resultCode == RESULT_OK) {
-                String fileName = data.getData().getPath();
-                GPXImporterSax gpxImporterSax = new GPXImporterSax();
-                updateFPDatabase(gpxImporterSax.ReadFancyPlaces(fileName));
+                final Intent finalData = data;
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                // import the places
+                                String fileName = finalData.getData().getPath();
+                                GPXImporterSax gpxImporterSax = new GPXImporterSax();
+                                List<FancyPlace> fpList = gpxImporterSax.ReadFancyPlaces(fileName);
+                                if (!fpList.isEmpty())
+                                {
+                                    updateFPDatabase(fpList);
+                                    Toast.makeText(getApplicationContext(), getString(R.string.fp_import_successful), Toast.LENGTH_LONG).show();
+
+                                } else {
+                                    Toast.makeText(getApplicationContext(), getString(R.string.fp_import_failed), Toast.LENGTH_LONG).show();
+                                }
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //ignore the places
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.FPAlertDialogStyle);
+                builder.setMessage(R.string.alert_confirm_import)
+                        .setPositiveButton(R.string.yes, dialogClickListener)
+                        .setNegativeButton(R.string.no, dialogClickListener)
+                        .show();
+
             }
         }
     }
