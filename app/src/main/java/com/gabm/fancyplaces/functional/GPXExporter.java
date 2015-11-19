@@ -115,9 +115,10 @@ public class GPXExporter implements IExporter {
     public boolean WriteToFile(List<FancyPlace> fpList, File targetName, Object userData) {
 
         boolean success = false;
-        targetName.mkdirs();
+        targetName.getParentFile().mkdirs();
         try {
             writeGpxFile(fpList, targetName);
+            Compress.zip(targetName.getParent(), targetName.getAbsolutePath().replace(".gpx", ".zip"));
             success = true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -132,16 +133,7 @@ public class GPXExporter implements IExporter {
         List<FancyPlace> fpList = new ArrayList<>();
         fpList.add(fancyPlace);
 
-
-        boolean success = false;
-        try {
-            writeGpxFile(fpList, target);
-            success = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return success;
+        return WriteToFile(fpList, target, userData);
     }
 
     protected String escapeXML(String input) {
