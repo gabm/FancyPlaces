@@ -15,12 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.gabm.fancyplaces.functional;
+package com.gabm.fancyplaces.functional.io;
 
 import android.os.Build;
 
 import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.data.FancyPlace;
+import com.gabm.fancyplaces.functional.Utilities;
 
 import java.io.File;
 import java.io.FileWriter;

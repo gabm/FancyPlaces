@@ -1,7 +1,7 @@
 // by jon simon
 // http://www.jondev.net/articles/Zipping_Files_with_Android_%28Programmatically%29
 
-package com.gabm.fancyplaces.functional;
+package com.gabm.fancyplaces.functional.io;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

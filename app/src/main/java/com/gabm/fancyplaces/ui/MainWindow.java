@@ -42,8 +42,8 @@ import com.gabm.fancyplaces.data.FancyPlace;
 import com.gabm.fancyplaces.data.ImageFile;
 import com.gabm.fancyplaces.functional.FancyPlacesArrayAdapter;
 import com.gabm.fancyplaces.functional.FancyPlacesDatabase;
-import com.gabm.fancyplaces.functional.GPXExporter;
-import com.gabm.fancyplaces.functional.GPXImporterSax;
+import com.gabm.fancyplaces.functional.io.GPXExporter;
+import com.gabm.fancyplaces.functional.io.GPXImporterSax;
 import com.gabm.fancyplaces.functional.IOnListModeChangeListener;
 import com.gabm.fancyplaces.functional.MainWindowViewpagerAdapter;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
@@ -53,9 +53,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

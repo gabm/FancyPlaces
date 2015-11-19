@@ -15,10 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.gabm.fancyplaces.functional;
+package com.gabm.fancyplaces.functional.io;
 
 import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.data.FancyPlace;
+import com.gabm.fancyplaces.functional.Utilities;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

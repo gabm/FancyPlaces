@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.gabm.fancyplaces.functional;
+package com.gabm.fancyplaces.functional.io;
 
 /**
  * Created by gabm on 19/11/15.
@@ -32,6 +32,7 @@ import org.xml.sax.SAXException;
 import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.data.FancyPlace;
 import com.gabm.fancyplaces.data.ImageFile;
+import com.gabm.fancyplaces.functional.Utilities;
 
 public class GpxFileContentHandler implements ContentHandler {
     private String currentValue;
