@@ -26,6 +26,13 @@
         android:title="@string/context_menu_gpx_export"
         android:visible="true"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/main_window_import"
+        android:icon="@drawable/ic_share_white_24dp"
+        android:title="@string/context_menu_gpx_import"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
 
     <item
         android:id="@+id/main_window_delete"

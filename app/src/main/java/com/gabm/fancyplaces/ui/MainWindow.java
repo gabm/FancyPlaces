@@ -43,6 +43,7 @@ import com.gabm.fancyplaces.data.ImageFile;
 import com.gabm.fancyplaces.functional.FancyPlacesArrayAdapter;
 import com.gabm.fancyplaces.functional.FancyPlacesDatabase;
 import com.gabm.fancyplaces.functional.GPXExporter;
+import com.gabm.fancyplaces.functional.GPXImporterSax;
 import com.gabm.fancyplaces.functional.IOnListModeChangeListener;
 import com.gabm.fancyplaces.functional.MainWindowViewpagerAdapter;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
@@ -420,6 +421,12 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
                 // set mode back to normal
                 fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
+                return true;
+            case R.id.main_window_import:
+                GPXImporterSax importerSax = new GPXImporterSax();
+                String importFileName = FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "Exported" + File.separator + "FancyPlaces.gpx";
+                File importFile = new File(importFileName);
+                List<FancyPlace> readFPs = importerSax.ReadFancyPlaces(importFile);
                 return true;
         }
 

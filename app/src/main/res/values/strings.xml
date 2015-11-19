@@ -5,6 +5,7 @@
     <string name="notes">Notes</string>
     <string name="context_menu_delete">Delete</string>
     <string name="context_menu_gpx_export">Export to GPX</string>
+    <string name="context_menu_gpx_import">Import from GPX</string>
     <string name="title_activity_list_fancy_places" translatable="false">Fancy Places</string>
     <string name="map">Map</string>
     <string name="sep_update_map_button">Update Location</string>

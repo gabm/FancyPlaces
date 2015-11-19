@@ -40,10 +40,11 @@ public class GpxFileContentHandler implements ContentHandler {
     private String currentValue;
     private FancyPlace curFancyPlace;
     private List<FancyPlace> curFancyPlaceList;
-    private final SimpleDateFormat GPXTIME_SIMPLEDATEFORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private boolean isInsideFPTag;
 
     public GpxFileContentHandler() {
         curFancyPlaceList = new ArrayList<>();
+        isInsideFPTag = false;
     }
 
     public List<FancyPlace> getFancyPlaceList()
@@ -55,13 +56,14 @@ public class GpxFileContentHandler implements ContentHandler {
     public void startElement(String uri, String localName, String qName,
                              Attributes atts) throws SAXException {
 
-        if (localName.equalsIgnoreCase("wpt")) {
+        if (localName.equalsIgnoreCase("wpt") && !isInsideFPTag) {
             curFancyPlace = new FancyPlace();
             curFancyPlace.setLocationLat(atts.getValue("lat").trim());
             curFancyPlace.setLocationLong(atts.getValue("lon").trim());
+            isInsideFPTag = true;
         }
 
-        if (localName.equalsIgnoreCase("link"))
+        if (localName.equalsIgnoreCase("link") && isInsideFPTag)
         {
             // todo: maybe well have to change that
             ImageFile tmpImg = new ImageFile(atts.getValue("href").trim());
@@ -72,14 +74,18 @@ public class GpxFileContentHandler implements ContentHandler {
     @Override
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
-        if (localName.equalsIgnoreCase("name"))
+        if (localName.equalsIgnoreCase("name") && isInsideFPTag)
             curFancyPlace.setTitle(currentValue.trim());
 
-        if (localName.equalsIgnoreCase("desc"))
+        if (localName.equalsIgnoreCase("desc") && isInsideFPTag )
             curFancyPlace.setNotes(currentValue.trim());
 
-        if (localName.equalsIgnoreCase("wpt"))
+        if (localName.equalsIgnoreCase("wpt") && isInsideFPTag)
+        {
             curFancyPlaceList.add(curFancyPlace);
+            isInsideFPTag = false;
+        }
+
     }
 
     @Override
