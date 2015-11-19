@@ -26,7 +26,7 @@ import java.util.List;
  * Created by gabm on 08/06/15.
  */
 public interface IExporter {
-    boolean WriteToFile(List<FancyPlace> fpList, File target, Object userData);
+    boolean WriteToFile(List<FancyPlace> fpList, String baseFolder, String fileNameWithoutExt);
 
-    boolean WriteToFile(FancyPlace fancyPlace, File target, Object userData);
+    boolean WriteToFile(FancyPlace fancyPlace,  String baseFolder, String fileNameWithoutExt);
 }

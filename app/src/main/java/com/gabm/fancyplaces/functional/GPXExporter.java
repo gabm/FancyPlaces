@@ -55,15 +55,14 @@ public class GPXExporter implements IExporter {
     private static final SimpleDateFormat POINT_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 
-    public void writeGpxFile(List<FancyPlace> fpList, File target) throws IOException {
-        FileWriter fw = new FileWriter(target);
-        String folder = target.getParent();
+    public void writeGpxFile(List<FancyPlace> fpList, String baseFolder, String gpxFileName) throws IOException {
+        FileWriter fw = new FileWriter(baseFolder + File.separator + gpxFileName);
 
         fw.write(XML_HEADER + "\n");
         fw.write(TAG_GPX + "\n");
         fw.write(getMetaData() + "\n");
 
-        writeWayPoints(fw, folder, fpList);
+        writeWayPoints(fw, baseFolder, fpList);
 
         fw.write("</gpx>");
 
@@ -112,28 +111,41 @@ public class GPXExporter implements IExporter {
     }
 
     @Override
-    public boolean WriteToFile(List<FancyPlace> fpList, File targetName, Object userData) {
+    public boolean WriteToFile(List<FancyPlace> fpList,  String baseFolder, String fileNameWithoutExt) {
 
         boolean success = false;
-        targetName.getParentFile().mkdirs();
+        String baseFolderTmp = baseFolder + File.separator + "tmp";
+        File folderTmp = new File(baseFolderTmp);
+        folderTmp.mkdirs();
         try {
-            writeGpxFile(fpList, targetName);
-            Compress.zip(targetName.getParent(), targetName.getAbsolutePath().replace(".gpx", ".zip"));
+            writeGpxFile(fpList, baseFolderTmp, fileNameWithoutExt + ".gpx");
+            Compress.zip(baseFolderTmp, baseFolder + fileNameWithoutExt + ".zip");
+
             success = true;
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            DeleteRecursive(folderTmp);
         }
 
         return success;
     }
 
+    void DeleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                DeleteRecursive(child);
+
+        fileOrDirectory.delete();
+    }
+
     @Override
-    public boolean WriteToFile(FancyPlace fancyPlace, File target, Object userData) {
+    public boolean WriteToFile(FancyPlace fancyPlace, String baseFolder, String fileNameWithoutExt) {
 
         List<FancyPlace> fpList = new ArrayList<>();
         fpList.add(fancyPlace);
 
-        return WriteToFile(fpList, target, userData);
+        return WriteToFile(fpList, baseFolder, fileNameWithoutExt);
     }
 
     protected String escapeXML(String input) {

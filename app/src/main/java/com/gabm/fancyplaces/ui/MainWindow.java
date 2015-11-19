@@ -182,10 +182,9 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 break;
             case OnFancyPlaceSelectedListener.INTENT_EXPORT_TO_GPX:
                 GPXExporter exporter = new GPXExporter();
-                File exportFile = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "export.gpx");
 
-                if (exporter.WriteToFile(fp, exportFile, null)) {
-                    Toast.makeText(getApplicationContext(), "File successfully exported to: " + FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "export.gpx", Toast.LENGTH_SHORT).show();
+                if (exporter.WriteToFile(fp, FancyPlacesApplication.EXTERNAL_EXPORT_DIR, "export")) {
+                    Toast.makeText(getApplicationContext(), "File successfully exported to: " + FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "export.zip", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "File export failed!", Toast.LENGTH_SHORT).show();
 
@@ -417,10 +416,9 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
             case R.id.main_window_share:
                 GPXExporter exporter = new GPXExporter();
-                String folderName = FancyPlacesApplication.EXTERNAL_EXPORT_DIR + Utilities.shuffleFileName("Export_", "");
-                File exportFile = new File(folderName + File.separator + "FancyPlaces.gpx");
 
-                if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile, null)) {
+                File exportFile = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR, Utilities.shuffleFileName("FancyPlaces_", "") + ".zip");
+                if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), FancyPlacesApplication.EXTERNAL_EXPORT_DIR, Utilities.shuffleFileName("FancyPlaces_", ""))) {
                     Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_successful) + exportFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_failed), Toast.LENGTH_LONG).show();
