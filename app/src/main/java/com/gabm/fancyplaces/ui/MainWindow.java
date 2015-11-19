@@ -20,6 +20,7 @@ package com.gabm.fancyplaces.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -78,6 +79,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main_window);
 
         curAppContext = (FancyPlacesApplication) getApplicationContext();
@@ -123,6 +125,11 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
         // set current menu
         curState.curMenu = R.menu.menu_main_window;
+
+        // check if we got called through an intent
+        Uri u = getIntent().getData();
+        if (u != null)
+            loadFromFile(u.getPath());
     }
 
     protected void setDefaultTitle() {
@@ -266,42 +273,44 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
         } else if (requestCode == REQUEST_FILE_SELECTION)
         {
-            if (resultCode == RESULT_OK) {
-                final Intent finalData = data;
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
-                                // import the places
-                                String fileName = finalData.getData().getPath();
-                                GPXImporterSax gpxImporterSax = new GPXImporterSax();
-                                List<FancyPlace> fpList = gpxImporterSax.ReadFancyPlaces(fileName);
-                                if (!fpList.isEmpty())
-                                {
-                                    updateFPDatabase(fpList);
-                                    Toast.makeText(getApplicationContext(), getString(R.string.fp_import_successful), Toast.LENGTH_LONG).show();
+            if (resultCode == RESULT_OK)
+                loadFromFile(data.getData().getPath());
 
-                                } else {
-                                    Toast.makeText(getApplicationContext(), getString(R.string.fp_import_failed), Toast.LENGTH_LONG).show();
-                                }
-                                break;
-
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                //ignore the places
-                                break;
-                        }
-                    }
-                };
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.FPAlertDialogStyle);
-                builder.setMessage(R.string.alert_confirm_import)
-                        .setPositiveButton(R.string.yes, dialogClickListener)
-                        .setNegativeButton(R.string.no, dialogClickListener)
-                        .show();
-
-            }
         }
+    }
+
+    protected void loadFromFile(final String path)
+    {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        // import the places
+                        GPXImporterSax gpxImporterSax = new GPXImporterSax();
+                        List<FancyPlace> fpList = gpxImporterSax.ReadFancyPlaces(path);
+                        if (!fpList.isEmpty())
+                        {
+                            updateFPDatabase(fpList);
+                            Toast.makeText(getApplicationContext(), getString(R.string.fp_import_successful), Toast.LENGTH_LONG).show();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), getString(R.string.fp_import_failed), Toast.LENGTH_LONG).show();
+                        }
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //ignore the places
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.FPAlertDialogStyle);
+        builder.setMessage(R.string.alert_confirm_import)
+                .setPositiveButton(R.string.yes, dialogClickListener)
+                .setNegativeButton(R.string.no, dialogClickListener)
+                .show();
     }
 
     @Override
