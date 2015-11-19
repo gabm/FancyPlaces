@@ -4,11 +4,17 @@
 Well, then this App is for you: It lets you create a georeferenced list of your most favorite places, your **FancyPlaces**.  Create your new **FancyPlaces** on the go, when you discover a cool shop, square, cafe or restaurant. Add an image of your place representing it and store some notes. When you feel like rediscovering, just look at your list or map and find out where your **FancyPlaces** are!
 
 ## Current Project Status
-Latest stable release: v1.2.3
+### stable
+The latest stable release is v1.2.3:
 * added italian translation (credits: eridrivic)
 
-
 The full Changelog can be found [here](Changelog.md).
+
+### upcoming
+Current upcoming features in v1.3.0 include:
+* ability to export/import multiple FancyPlace to a zipped gpx for sharing
+
+
 ## Availability
 There are several ways of obtaining **FancyPlaces**:
 * the prefered way of obtaining **FancyPlaces** is through [F-Droid](https://f-droid.org/repository/browse/?fdcategory=Navigation&fdid=com.gabm.fancyplaces)
