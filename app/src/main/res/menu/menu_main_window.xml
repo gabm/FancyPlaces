@@ -3,6 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.gabm.fancyplaces.ui.MainWindow">
     <item
+        android:id="@+id/main_window_import"
+        android:icon="@drawable/ic_get_app_white_24dp"
+        android:title="@string/context_menu_gpx_import"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/main_window_about"
         android:icon="@drawable/ic_info_outline_white_24dp"
         android:title="@string/main_window_about"

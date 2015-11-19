@@ -465,9 +465,6 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 return true;
             case R.id.main_window_import:
                 showFileSelector();
-
-                // set mode back to normal
-                fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
                 return true;
         }
 
