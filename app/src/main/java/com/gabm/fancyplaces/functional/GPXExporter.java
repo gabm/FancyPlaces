@@ -115,6 +115,7 @@ public class GPXExporter implements IExporter {
     public boolean WriteToFile(List<FancyPlace> fpList, File targetName, Object userData) {
 
         boolean success = false;
+        targetName.mkdirs();
         try {
             writeGpxFile(fpList, targetName);
             success = true;

@@ -47,6 +47,7 @@ import com.gabm.fancyplaces.functional.GPXImporterSax;
 import com.gabm.fancyplaces.functional.IOnListModeChangeListener;
 import com.gabm.fancyplaces.functional.MainWindowViewpagerAdapter;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
+import com.gabm.fancyplaces.functional.Utilities;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -214,13 +215,6 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         startActivityForResult(intent, REQUEST_SHOW_EDIT_PLACE);
     }
 
-    private String shuffleFileName(String prefix, String suffix) {
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-        return prefix + timeStamp + suffix;
-    }
-
 
     protected int findElementPosition(long id) {
         int result = -1;
@@ -242,7 +236,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
             if (resultCode == ShowEditPlace.RESULT_DATA_CHANGED) {
                 // move image to appropriate location
-                fancyPlace.setImage(fancyPlace.getImage().copy(getFilesDir().getAbsolutePath() + File.separator + shuffleFileName("IMG_", ".png")));
+                fancyPlace.setImage(fancyPlace.getImage().copy(getFilesDir().getAbsolutePath() + File.separator + Utilities.shuffleFileName("IMG_", ".png")));
                 if (curState.OriginalImageFile != null)
                     curState.OriginalImageFile.delete();
 
@@ -408,9 +402,8 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
             case R.id.main_window_share:
                 GPXExporter exporter = new GPXExporter();
-                String folderName = FancyPlacesApplication.EXTERNAL_EXPORT_DIR + shuffleFileName("Export_", "");
+                String folderName = FancyPlacesApplication.EXTERNAL_EXPORT_DIR + Utilities.shuffleFileName("Export_", "");
                 File exportFile = new File(folderName + File.separator + "FancyPlaces.gpx");
-                (new File(folderName)).mkdirs();
 
                 if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile, null)) {
                     Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_successful) + exportFile.getAbsolutePath(), Toast.LENGTH_LONG).show();

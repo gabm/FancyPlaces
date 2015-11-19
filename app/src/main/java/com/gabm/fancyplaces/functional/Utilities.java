@@ -17,22 +17,18 @@
 
 package com.gabm.fancyplaces.functional;
 
-import com.gabm.fancyplaces.data.FancyPlace;
-
-import java.io.File;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by gabm on 19/11/15.
  */
-public class GPXExporterSax implements IExporter {
-    @Override
-    public boolean WriteToFile(List<FancyPlace> fpList, File target, Object userData) {
-        return false;
-    }
+public class Utilities {
 
-    @Override
-    public boolean WriteToFile(FancyPlace fancyPlace, File target, Object userData) {
-        return false;
+    public static String shuffleFileName(String prefix, String suffix) {
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        return prefix + timeStamp + suffix;
     }
 }
