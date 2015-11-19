@@ -19,6 +19,7 @@ package com.gabm.fancyplaces.functional;
 
 import android.os.Build;
 
+import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.data.FancyPlace;
 
 import java.io.File;
@@ -111,41 +112,33 @@ public class GPXExporter implements IExporter {
     }
 
     @Override
-    public boolean WriteToFile(List<FancyPlace> fpList,  String baseFolder, String fileNameWithoutExt) {
+    public boolean WriteToFile(List<FancyPlace> fpList, String fileNameWithExt) {
 
         boolean success = false;
-        String baseFolderTmp = baseFolder + File.separator + "tmp";
+        String baseFolderTmp = FancyPlacesApplication.TMP_FOLDER + File.separator + "export";
         File folderTmp = new File(baseFolderTmp);
         folderTmp.mkdirs();
         try {
-            writeGpxFile(fpList, baseFolderTmp, fileNameWithoutExt + ".gpx");
-            Compress.zip(baseFolderTmp, baseFolder + fileNameWithoutExt + ".zip");
+            writeGpxFile(fpList, baseFolderTmp, "FancyPlaces.gpx");
+            Compression.zip(baseFolderTmp, fileNameWithExt);
 
             success = true;
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            DeleteRecursive(folderTmp);
+            Utilities.deleteRecursive(folderTmp);
         }
 
         return success;
     }
 
-    void DeleteRecursive(File fileOrDirectory) {
-        if (fileOrDirectory.isDirectory())
-            for (File child : fileOrDirectory.listFiles())
-                DeleteRecursive(child);
-
-        fileOrDirectory.delete();
-    }
-
     @Override
-    public boolean WriteToFile(FancyPlace fancyPlace, String baseFolder, String fileNameWithoutExt) {
+    public boolean WriteToFile(FancyPlace fancyPlace, String fileNameWithExt) {
 
         List<FancyPlace> fpList = new ArrayList<>();
         fpList.add(fancyPlace);
 
-        return WriteToFile(fpList, baseFolder, fileNameWithoutExt);
+        return WriteToFile(fpList, fileNameWithExt);
     }
 
     protected String escapeXML(String input) {

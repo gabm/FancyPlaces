@@ -26,5 +26,5 @@ import java.util.List;
  * Created by gabm on 19/11/15.
  */
 public interface IImporter {
-    List<FancyPlace> ReadFancyPlaces(File file);
+    List<FancyPlace> ReadFancyPlaces(String fileName);
 }

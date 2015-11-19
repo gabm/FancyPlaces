@@ -180,16 +180,6 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             case OnFancyPlaceSelectedListener.INTENT_CREATE_NEW:
                 showSEPActivityForResult(getApplicationContext(), new FancyPlace(), ShowEditPlace.MODE_EDIT);
                 break;
-            case OnFancyPlaceSelectedListener.INTENT_EXPORT_TO_GPX:
-                GPXExporter exporter = new GPXExporter();
-
-                if (exporter.WriteToFile(fp, FancyPlacesApplication.EXTERNAL_EXPORT_DIR, "export")) {
-                    Toast.makeText(getApplicationContext(), "File successfully exported to: " + FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "export.zip", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "File export failed!", Toast.LENGTH_SHORT).show();
-
-                }
-                break;
         }
     }
 
@@ -418,7 +408,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 GPXExporter exporter = new GPXExporter();
 
                 File exportFile = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR, Utilities.shuffleFileName("FancyPlaces_", "") + ".zip");
-                if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), FancyPlacesApplication.EXTERNAL_EXPORT_DIR, Utilities.shuffleFileName("FancyPlaces_", ""))) {
+                if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile.getAbsolutePath())) {
                     Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_successful) + exportFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_failed), Toast.LENGTH_LONG).show();
@@ -430,9 +420,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 return true;
             case R.id.main_window_import:
                 GPXImporterSax importerSax = new GPXImporterSax();
-                String importFileName = FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "Exported" + File.separator + "FancyPlaces.gpx";
-                File importFile = new File(importFileName);
-                List<FancyPlace> readFPs = importerSax.ReadFancyPlaces(importFile);
+                List<FancyPlace> readFPs = importerSax.ReadFancyPlaces("");
                 updateFPDatabase(readFPs);
                 return true;
         }

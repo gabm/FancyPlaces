@@ -21,18 +21,13 @@ package com.gabm.fancyplaces.functional;
  * Created by gabm on 19/11/15.
  */
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-
-import android.location.Location;
 
 import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.data.FancyPlace;
@@ -70,7 +65,7 @@ public class GpxFileContentHandler implements ContentHandler {
         if (localName.equalsIgnoreCase("link") && isInsideFPTag)
         {
             ImageFile tmpImg = new ImageFile(baseDir + File.separator + atts.getValue("href").trim().substring(5));
-            String tmpImgFileName = FancyPlacesApplication.TMP_IMAGE_FOLDER + File.separator + Utilities.shuffleFileName("Img_", "");
+            String tmpImgFileName = FancyPlacesApplication.TMP_FOLDER + File.separator + Utilities.shuffleFileName("Img_", "");
             tmpImg.copy(tmpImgFileName);
             curFancyPlace.setImage(new ImageFile(tmpImgFileName));
         }

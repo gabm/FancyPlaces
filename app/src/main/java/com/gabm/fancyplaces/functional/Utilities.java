@@ -17,6 +17,7 @@
 
 package com.gabm.fancyplaces.functional;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -31,4 +32,13 @@ public class Utilities {
 
         return prefix + timeStamp + suffix;
     }
+
+    public static void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteRecursive(child);
+
+        fileOrDirectory.delete();
+    }
+
 }

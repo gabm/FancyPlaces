@@ -17,6 +17,7 @@
 
 package com.gabm.fancyplaces.functional;
 
+import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.data.FancyPlace;
 
 import org.xml.sax.InputSource;
@@ -35,7 +36,25 @@ import java.util.List;
  */
 public class GPXImporterSax implements IImporter {
     @Override
-    public List<FancyPlace> ReadFancyPlaces(File file) {
+    public List<FancyPlace> ReadFancyPlaces(String fileName) {
+
+        File tmpFolder = new File(FancyPlacesApplication.TMP_FOLDER + File.separator + "import");
+        List<FancyPlace> result = new ArrayList<>();
+        if (!Compression.unzip(fileName, tmpFolder.getAbsolutePath()))
+            return result;
+
+        result = ReadGXPFile(new File(tmpFolder.getAbsolutePath() + File.separator + "FancyPlaces.gpx"));
+
+
+        Utilities.deleteRecursive(tmpFolder);
+
+        return result;
+    }
+
+
+
+    List<FancyPlace> ReadGXPFile(File file)
+    {
         List<FancyPlace> resultList = new ArrayList<>();
 
         try {
