@@ -64,6 +64,7 @@ import java.util.List;
 public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelectedListener, IOnListModeChangeListener {
 
     public static int REQUEST_SHOW_EDIT_PLACE = 0;
+    public static int REQUEST_FILE_SELECTION = 1;
     private static FancyPlacesApplication curAppContext = null;
     public FancyPlacesArrayAdapter fancyPlaceArrayAdapter = null;
     ViewPager pager;
@@ -263,6 +264,13 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             }
             (new ImageFile(com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FULL_PATH)).delete();
 
+        } else if (requestCode == REQUEST_FILE_SELECTION)
+        {
+            if (resultCode == RESULT_OK) {
+                String fileName = data.getData().getPath();
+                GPXImporterSax gpxImporterSax = new GPXImporterSax();
+                updateFPDatabase(gpxImporterSax.ReadFancyPlaces(fileName));
+            }
         }
     }
 
@@ -417,15 +425,21 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
                 return true;
             case R.id.main_window_import:
-                GPXImporterSax importerSax = new GPXImporterSax();
-                List<FancyPlace> readFPs = importerSax.ReadFancyPlaces("");
-                updateFPDatabase(readFPs);
+                showFileSelector();
+
+                // set mode back to normal
+                fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
                 return true;
         }
 
         return false;
     }
 
+    protected void showFileSelector() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/zip");
+        startActivityForResult(intent, REQUEST_FILE_SELECTION);
+    }
 
     @Override
     public void onBackPressed() {

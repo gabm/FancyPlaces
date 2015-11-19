@@ -40,6 +40,7 @@ public class GPXImporterSax implements IImporter {
     public List<FancyPlace> ReadFancyPlaces(String fileName) {
 
         File tmpFolder = new File(FancyPlacesApplication.TMP_FOLDER + File.separator + "import");
+        tmpFolder.mkdirs();
         List<FancyPlace> result = new ArrayList<>();
         if (!Compression.unzip(fileName, tmpFolder.getAbsolutePath()))
             return result;

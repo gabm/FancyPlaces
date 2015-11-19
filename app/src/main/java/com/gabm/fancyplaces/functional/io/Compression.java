@@ -86,12 +86,12 @@ public class Compression {
                 // Need to create directories if not exists, or
                 // it will generate an Exception...
                 if (ze.isDirectory()) {
-                    File fmd = new File(path + filename);
+                    File fmd = new File(path + File.separator + filename);
                     fmd.mkdirs();
                     continue;
                 }
 
-                FileOutputStream fout = new FileOutputStream(path + filename);
+                FileOutputStream fout = new FileOutputStream(path + File.separator + filename);
 
                 // cteni zipu a zapis
                 while ((count = zis.read(buffer)) != -1)
