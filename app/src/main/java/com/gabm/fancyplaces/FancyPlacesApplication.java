@@ -37,15 +37,17 @@ public class FancyPlacesApplication extends Application {
     static public final int MAP_DEFAULT_DURATION = 3000;
 
     public static String TMP_IMAGE_FULL_PATH = "";
+    public static String TMP_IMAGE_FOLDER ="";
     public static String EXTERNAL_EXPORT_DIR = "";
     private static LocationHandler locationHandler = null;
 
     @Override
     public void onCreate() {
-
+        super.onCreate();
 
         // tmp file dir
-        TMP_IMAGE_FULL_PATH = getExternalCacheDir() + File.separator + com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FILENAME;
+        TMP_IMAGE_FOLDER = getExternalCacheDir().getAbsolutePath();
+        TMP_IMAGE_FULL_PATH = TMP_IMAGE_FOLDER + File.separator + com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FILENAME;
 
         // external export dir
         EXTERNAL_EXPORT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getResources().getString(R.string.app_name) + File.separator;

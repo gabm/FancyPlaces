@@ -20,6 +20,7 @@ package com.gabm.fancyplaces.functional;
 /**
  * Created by gabm on 19/11/15.
  */
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import org.xml.sax.SAXException;
 
 import android.location.Location;
 
+import com.gabm.fancyplaces.FancyPlacesApplication;
 import com.gabm.fancyplaces.data.FancyPlace;
 import com.gabm.fancyplaces.data.ImageFile;
 
@@ -41,10 +43,12 @@ public class GpxFileContentHandler implements ContentHandler {
     private FancyPlace curFancyPlace;
     private List<FancyPlace> curFancyPlaceList;
     private boolean isInsideFPTag;
+    private String baseDir;
 
-    public GpxFileContentHandler() {
+    public GpxFileContentHandler(String _baseDir) {
         curFancyPlaceList = new ArrayList<>();
         isInsideFPTag = false;
+        baseDir = _baseDir;
     }
 
     public List<FancyPlace> getFancyPlaceList()
@@ -65,9 +69,10 @@ public class GpxFileContentHandler implements ContentHandler {
 
         if (localName.equalsIgnoreCase("link") && isInsideFPTag)
         {
-            // todo: maybe well have to change that
-            ImageFile tmpImg = new ImageFile(atts.getValue("href").trim());
-            curFancyPlace.setImage(tmpImg);
+            ImageFile tmpImg = new ImageFile(baseDir + File.separator + atts.getValue("href").trim().substring(5));
+            String tmpImgFileName = FancyPlacesApplication.TMP_IMAGE_FOLDER + File.separator + Utilities.shuffleFileName("Img_", "");
+            tmpImg.copy(tmpImgFileName);
+            curFancyPlace.setImage(new ImageFile(tmpImgFileName));
         }
     }
 

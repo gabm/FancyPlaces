@@ -42,7 +42,7 @@ public class GPXImporterSax implements IImporter {
             System.setProperty("org.xml.sax.driver","org.xmlpull.v1.sax2.Driver");
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 
-            GpxFileContentHandler gpxFileContentHandler = new GpxFileContentHandler();
+            GpxFileContentHandler gpxFileContentHandler = new GpxFileContentHandler(file.getParent());
             xmlReader.setContentHandler(gpxFileContentHandler);
 
             FileReader fileReader = new FileReader(file);

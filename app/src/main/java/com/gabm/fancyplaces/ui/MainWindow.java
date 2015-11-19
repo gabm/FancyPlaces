@@ -228,6 +228,37 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         return result;
     }
 
+    protected void updateFPDatabase(List<FancyPlace> fancyPlaceList)
+    {
+        for (FancyPlace fp : fancyPlaceList)
+            updateFPDatabase(fp);
+    }
+
+    protected void updateFPDatabase(FancyPlace fancyPlace)
+    {
+        // move image to appropriate location
+        ImageFile originalImage = fancyPlace.getImage();
+        fancyPlace.setImage(fancyPlace.getImage().copy(getFilesDir().getAbsolutePath() + File.separator + Utilities.shuffleFileName("IMG_", ".png")));
+        originalImage.delete();
+
+        // open database connection
+        fancyPlacesDatabase.open();
+
+
+        if (fancyPlace.isInDatabase()) {
+            // update
+            int pos = findElementPosition(fancyPlace.getId());
+            fancyPlacesDatabase.updateFancyPlace(fancyPlace);
+            fancyPlaceArrayAdapter.remove(fancyPlaceArrayAdapter.getItem(pos));
+            fancyPlaceArrayAdapter.insert(fancyPlace, pos);
+
+        } else {
+            // create new
+            fancyPlace = fancyPlacesDatabase.createFancyPlace(fancyPlace);
+            fancyPlaceArrayAdapter.add(fancyPlace);
+        }
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == REQUEST_SHOW_EDIT_PLACE) {
@@ -235,27 +266,11 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             FancyPlace fancyPlace = res.getParcelable("data");
 
             if (resultCode == ShowEditPlace.RESULT_DATA_CHANGED) {
-                // move image to appropriate location
-                fancyPlace.setImage(fancyPlace.getImage().copy(getFilesDir().getAbsolutePath() + File.separator + Utilities.shuffleFileName("IMG_", ".png")));
+
+                updateFPDatabase(fancyPlace);
+                // clean up
                 if (curState.OriginalImageFile != null)
                     curState.OriginalImageFile.delete();
-
-                // open database connection
-                fancyPlacesDatabase.open();
-
-
-                if (fancyPlace.isInDatabase()) {
-                    // update
-                    int pos = findElementPosition(fancyPlace.getId());
-                    fancyPlacesDatabase.updateFancyPlace(fancyPlace);
-                    fancyPlaceArrayAdapter.remove(fancyPlaceArrayAdapter.getItem(pos));
-                    fancyPlaceArrayAdapter.insert(fancyPlace, pos);
-
-                } else {
-                    // create new
-                    fancyPlace = fancyPlacesDatabase.createFancyPlace(fancyPlace);
-                    fancyPlaceArrayAdapter.add(fancyPlace);
-                }
             } else {
                 fancyPlace.setImage(curState.OriginalImageFile);
             }
@@ -420,6 +435,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 String importFileName = FancyPlacesApplication.EXTERNAL_EXPORT_DIR + "Exported" + File.separator + "FancyPlaces.gpx";
                 File importFile = new File(importFileName);
                 List<FancyPlace> readFPs = importerSax.ReadFancyPlaces(importFile);
+                updateFPDatabase(readFPs);
                 return true;
         }
 
