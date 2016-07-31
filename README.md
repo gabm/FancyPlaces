@@ -4,8 +4,8 @@
 Well, then this App is for you: It lets you create a georeferenced list of your most favorite places, your **FancyPlaces**.  Create your new **FancyPlaces** on the go, when you discover a cool shop, square, cafe or restaurant. Add an image of your place representing it and store some notes. When you feel like rediscovering, just look at your list or map and find out where your **FancyPlaces** are!
 
 ## Current Project Status
-Latest stable release: v1.2.3
-* added italian translation (credits: eridrivic)
+Latest stable release: v1.2.4
+* use Mapnik as default source as MapQuest changed their policy
 
 
 The full Changelog can be found [here](Changelog.md).

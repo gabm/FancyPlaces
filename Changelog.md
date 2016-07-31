@@ -1,4 +1,9 @@
 # Changelog
+## v1.2.4 - 31.07.2016
+* use Mapnik as default source as MapQuest changed their policy
+* update osmdroid to version 5.2
+* retarget application to version Android API version 22
+
 ## v1.2.3 - 16.11.2015
 * added italian translation (credit: eridrivic)
 
