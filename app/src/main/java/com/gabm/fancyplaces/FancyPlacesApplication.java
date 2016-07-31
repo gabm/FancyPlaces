@@ -42,6 +42,7 @@ public class FancyPlacesApplication extends Application {
 
     @Override
     public void onCreate() {
+        super.onCreate();
 
 
         // tmp file dir

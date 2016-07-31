@@ -80,7 +80,7 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
         View v = inflater.inflate(R.layout.fancy_places_osmview, container, false);
 
         mMapView = (OsmMapViewScrollWorkaround) v.findViewById(R.id.fp_map_view);
-        mMapView.setTileSource(TileSourceFactory.MAPQUESTOSM);
+        mMapView.setTileSource(TileSourceFactory.MAPNIK);
         mMapView.setMultiTouchControls(true);
         mMapView.setTilesScaledToDpi(true);
         mMapView.setWorkaroundEnabled(true);
