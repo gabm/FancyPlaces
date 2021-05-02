@@ -69,6 +69,9 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
     // gps-permission stuff
     private static final int REQUEST_ID_READ_GPS = 21;
     private static final String PERMISSION_READ_GPS = Manifest.permission.ACCESS_FINE_LOCATION;
+
+    private static final int REQUEST_ID_FILE_WRITE = 23;
+    private static final String PERMISSION_FILE_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     int RESULT_NO_PERMISSIONS = -22;
 
     public static int REQUEST_SHOW_EDIT_PLACE = 0;
@@ -176,6 +179,17 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                     setResult(RESULT_NO_PERMISSIONS, null);
                     finish();
                     return;
+                }
+                return;
+            }
+
+            case REQUEST_ID_FILE_WRITE: {
+                if (isGrantSuccess(grantResults)) {
+                    // don-t ask again
+                    onExportToGpx();
+                } else {
+                    Toast.makeText(this, R.string.permission_error, Toast.LENGTH_LONG).show();
+                    setResult(RESULT_NO_PERMISSIONS, null);
                 }
                 return;
             }
@@ -509,18 +523,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 return true;
 
             case R.id.main_window_share:
-                GPXExporter exporter = new GPXExporter();
-
-                File exportFile = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR, Utilities.shuffleFileName("FancyPlaces_", "") + ".zip");
-                if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile.getAbsolutePath())) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_successful) + exportFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_failed), Toast.LENGTH_LONG).show();
-
-                }
-
-                // set mode back to normal
-                fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
+                onExportToGpx();
                 return true;
             case R.id.main_window_import:
                 showFileSelector();
@@ -528,6 +531,27 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         }
 
         return false;
+    }
+
+    private void onExportToGpx() {
+        if (ActivityCompat.checkSelfPermission(this, PERMISSION_FILE_WRITE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(PERMISSION_FILE_WRITE, REQUEST_ID_FILE_WRITE);
+            return;
+        }
+
+        GPXExporter exporter = new GPXExporter();
+
+        File exportFile = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR, Utilities.shuffleFileName("FancyPlaces_", "") + ".zip");
+        if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile.getAbsolutePath())) {
+            Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_successful) + exportFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_failed), Toast.LENGTH_LONG).show();
+
+        }
+
+        // set mode back to normal
+        fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
     }
 
     protected void showFileSelector() {
