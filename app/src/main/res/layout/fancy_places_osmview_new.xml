@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <com.melnykov.fab.FloatingActionButton
+    <FloatingActionButton
         android:id="@+id/fp_map_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,12 +18,11 @@
         android:layout_margin="16dp"
         android:elevation="8dp"
         android:src="@drawable/ic_add_white_24dp"
-
+        />
+    <!--
+    <com.melnykov.fab.FloatingActionButton
         fab:fab_colorNormal="@color/ColorAccent"
         fab:fab_colorPressed="@color/ColorAccentDark"
         fab:fab_colorRipple="@color/ColorAccentRipple"
-        />
-    <!--
-    <com.melnykov.fab.FloatingActionButton <->  <-> FloatingActionButton
         -->
 </FrameLayout>

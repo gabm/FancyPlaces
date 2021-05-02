@@ -123,18 +123,18 @@ public class OsmMarker extends Overlay implements View.OnClickListener {
     }
 
     @Override
-    protected void draw(Canvas canvas, MapView mapView, boolean shadow) {
+    public void draw(Canvas canvas, MapView mapView, boolean shadow) {
         if (this.Icon != null) {
             Projection pj = mapView.getProjection();
-            Point PositionPixels = new Point();
-            pj.toPixels(this.Position, PositionPixels);
+            Point positionPixels = new Point();
+            pj.toPixels(this.Position, positionPixels);
             int width = this.Icon.getIntrinsicWidth();
             int height = this.Icon.getIntrinsicHeight();
             Rect rect = new Rect(0, 0, width, height);
             rect.offset(-((int) (this.AnchorU * (float) width)), -((int) (this.AnchorV * (float) height)));
             this.Icon.setBounds(rect);
             this.Icon.setAlpha((int) (this.Alpha * 255.0F));
-            drawAt(canvas, this.Icon, PositionPixels.x, PositionPixels.y, false, 0);
+            drawAt(canvas, this.Icon, positionPixels.x, positionPixels.y, false, 0);
         }
     }
 

@@ -22,4 +22,5 @@
   <string name="alert_discard_changes">Wenn sie zurück gehen werden Ihre Änderungen verworfen. Möchten Sie fortfahren?</string>
   <string name="gpx_export_successful">"Datei erfolgreich exportiert nach: "</string>
   <string name="gpx_export_failed">GPX Export fehlgeschlagen!</string>
+  <string name="permission_error">Fehlende Berechtigung</string>
 </resources>

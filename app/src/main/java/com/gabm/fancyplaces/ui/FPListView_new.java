@@ -21,10 +21,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
-// replacement for
-import com.melnykov.fab.FloatingActionButton;
-// import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,14 +30,18 @@ import android.widget.ListView;
 import com.gabm.fancyplaces.R;
 import com.gabm.fancyplaces.functional.IOnListModeChangeListener;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// replacement for
+// import android.support.design.widget.android.support.design.widget.;
+
 /**
  * Created by gabm on 15/05/15.
  */
-public class FPListView extends TabItem {
+public class FPListView_new extends TabItem {
 
     private OnFancyPlaceSelectedListener fancyPlaceSelectedCallback = null;
     private ListView fancyPlacesList = null;
@@ -50,8 +50,8 @@ public class FPListView extends TabItem {
 
 
 
-    public static FPListView newInstance() {
-        FPListView result = new FPListView();
+    public static FPListView_new newInstance() {
+        FPListView_new result = new FPListView_new();
 
         return result;
     }
@@ -63,8 +63,8 @@ public class FPListView extends TabItem {
 
         // add places to list
         fancyPlacesList = (ListView) v.findViewById(R.id.fp_list_view);
-        com.melnykov.fab.FloatingActionButton fab = (com.melnykov.fab.FloatingActionButton) v.findViewById(R.id.fp_list_fab);
-        fab.attachToListView(fancyPlacesList);
+        android.support.design.widget.FloatingActionButton fab = (android.support.design.widget.FloatingActionButton) v.findViewById(R.id.fp_list_fab);
+        //!!! fab.attachToListView(fancyPlacesList);
 
         // set on click listener
         fab.setOnClickListener(new View.OnClickListener() {

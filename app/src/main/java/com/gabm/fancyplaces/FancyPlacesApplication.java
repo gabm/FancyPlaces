@@ -52,8 +52,11 @@ public class FancyPlacesApplication extends Application {
         // external export dir
         EXTERNAL_EXPORT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getResources().getString(R.string.app_name) + File.separator;
         (new File(EXTERNAL_EXPORT_DIR)).mkdirs();
+    }
 
+    public void initLocationHandler() {
         // attach lifecycle callbacks to location handler
+        // Must be called from Activity to allow asking for permission
         locationHandler = new LocationHandler((LocationManager) getSystemService(Context.LOCATION_SERVICE));
         registerActivityLifecycleCallbacks(locationHandler);
     }

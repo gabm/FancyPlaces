@@ -21,10 +21,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
-
-//!!!
-import com.melnykov.fab.FloatingActionButton;
-// import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +35,12 @@ import com.gabm.fancyplaces.functional.OsmMapHandler;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
+//!!! import com.melnykov.fab.FloatingActionButton;
+
 /**
  * Created by gabm on 23/05/15.
  */
-public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocationUpdatedListener {
+public class FPOsmDroidView_new extends TabItem implements LocationHandler.OnLocationUpdatedListener {
 
     private OsmMapViewScrollWorkaround mMapView = null;
     private OsmMapHandler mapHandler = null;
@@ -49,8 +48,8 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
     private MainWindow parent = null;
     private LocationHandler locationHandler = null;
 
-    public static FPOsmDroidView newInstance() {
-        FPOsmDroidView result = new FPOsmDroidView();
+    public static FPOsmDroidView_new newInstance() {
+        FPOsmDroidView_new result = new FPOsmDroidView_new();
 
         return result;
     }
@@ -62,7 +61,7 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
 
     @Override
     public void onLocationUpdated(Location location) {
-        mapHandler.setCamera(location.getLatitude(), location.getLongitude(), com.gabm.fancyplaces.FancyPlacesApplication.MAP_DEFAULT_ZOOM_FAR);
+        mapHandler.setCamera(location.getLatitude(), location.getLongitude(), FancyPlacesApplication.MAP_DEFAULT_ZOOM_FAR);
         mapHandler.setCurrentLocationMarker(location.getLatitude(), location.getLongitude(), getString(R.string.your_location));
     }
 
@@ -83,10 +82,11 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
         View v = inflater.inflate(R.layout.fancy_places_osmview, container, false);
 
         mMapView = (OsmMapViewScrollWorkaround) v.findViewById(R.id.fp_map_view);
+        // mMapView.setTileSource(TileSourceFactory.MAPQUESTOSM);
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
         mMapView.setMultiTouchControls(true);
         mMapView.setTilesScaledToDpi(true);
-        mMapView.setWorkaroundEnabled(true);
+        // mMapView.setWorkaroundEnabled(true);
 
         mapHandler = new OsmMapHandler(mMapView, fancyPlaceSelectedCallback);
         mapHandler.setAdapter(parent.fancyPlaceArrayAdapter);
@@ -127,6 +127,7 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
 
     }
 
+    @Deprecated
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

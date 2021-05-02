@@ -28,4 +28,6 @@
     <string name="gpx_export_failed">GPX export failed!</string>
     <string name="fp_import_successful">Import successful!</string>
     <string name="fp_import_failed">Import failed, the provided zip doesn\'t contain FancyPlaces</string>
+
+    <string name="permission_error">Missing permisions</string>
 </resources>

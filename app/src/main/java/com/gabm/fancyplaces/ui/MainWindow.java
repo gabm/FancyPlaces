@@ -67,7 +67,7 @@ import java.util.List;
 
 public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelectedListener, IOnListModeChangeListener {
     // gps-permission stuff
-    private static final int REQUEST_ID_READ_GPS = 2001;
+    private static final int REQUEST_ID_READ_GPS = 21;
     private static final String PERMISSION_READ_GPS = Manifest.permission.ACCESS_FINE_LOCATION;
     int RESULT_NO_PERMISSIONS = -22;
 
@@ -82,14 +82,30 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
     private LFPState curState = new LFPState();
     private ArrayList<FancyPlace> fancyPlaces = null;
     private FPListView fpListView = null;
+    private Bundle firstSavedInstanceState = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main_window);
-
         curAppContext = (FancyPlacesApplication) getApplicationContext();
+
+        if (curAppContext.getLocationHandler() == null) {
+                // if app wants to display my logcation: ask for permissions
+                if (ActivityCompat.checkSelfPermission(this, PERMISSION_READ_GPS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermission(PERMISSION_READ_GPS, REQUEST_ID_READ_GPS);
+                    firstSavedInstanceState = savedInstanceState;
+                    return;
+                }
+            }
+
+        onCreateWithPermission(savedInstanceState);
+    }
+
+    protected void onCreateWithPermission(Bundle savedInstanceState) {
+
+        setContentView(R.layout.activity_main_window);
 
         setDefaultTitle();
 
@@ -138,16 +154,6 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         if (u != null)
             loadFromFile(u.getPath());
 
-        if (false) { //!!!
-            if (curAppContext.getLocationHandler() == null) {
-                // if app wants to display my logcation: ask for permissions
-                if (ActivityCompat.checkSelfPermission(this, PERMISSION_READ_GPS)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    requestPermission(PERMISSION_READ_GPS, REQUEST_ID_READ_GPS);
-                }
-            }
-        }
-
     }
 
     private void requestPermission(final String permission, final int requestCode) {
@@ -164,6 +170,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 if (isGrantSuccess(grantResults)) {
                     // don-t ask again
                     curAppContext.initLocationHandler();
+                    onCreateWithPermission(firstSavedInstanceState);
                 } else {
                     Toast.makeText(this, R.string.permission_error, Toast.LENGTH_LONG).show();
                     setResult(RESULT_NO_PERMISSIONS, null);
