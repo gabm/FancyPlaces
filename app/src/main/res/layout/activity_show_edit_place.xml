@@ -86,7 +86,7 @@
         </LinearLayout>
     </com.gabm.fancyplaces.ui.ObservableScrollView>
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/sep_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -100,6 +100,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:visibility="gone" />
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
 </FrameLayout>

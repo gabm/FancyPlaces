@@ -12,7 +12,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:choiceMode="multipleChoice"/>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fp_list_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

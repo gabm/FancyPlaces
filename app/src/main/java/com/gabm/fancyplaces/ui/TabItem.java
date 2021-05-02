@@ -18,7 +18,7 @@
 package com.gabm.fancyplaces.ui;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by gabm on 15/05/15.
