@@ -22,9 +22,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-// replacement for
-import com.melnykov.fab.FloatingActionButton;
-// import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,8 +61,8 @@ public class FPListView extends TabItem {
 
         // add places to list
         fancyPlacesList = (ListView) v.findViewById(R.id.fp_list_view);
-        com.melnykov.fab.FloatingActionButton fab = (com.melnykov.fab.FloatingActionButton) v.findViewById(R.id.fp_list_fab);
-        fab.attachToListView(fancyPlacesList);
+        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fp_list_fab);
+        //!!!??? fab.attachToListView(fancyPlacesList);
 
         // set on click listener
         fab.setOnClickListener(new View.OnClickListener() {

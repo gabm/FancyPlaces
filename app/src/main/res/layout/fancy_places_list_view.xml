@@ -12,7 +12,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:choiceMode="multipleChoice"/>
 
-    <com.melnykov.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fp_list_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,14 +21,5 @@
         android:elevation="8dp"
         android:src="@drawable/ic_add_white_24dp"
 
-        fab:fab_colorNormal="@color/ColorAccent"
-        fab:fab_colorPressed="@color/ColorAccentDark"
-        fab:fab_colorRipple="@color/ColorAccentRipple"
         />
-    <!--
-    <com.melnykov.fab.FloatingActionButton <-> FloatingActionButton
-        fab:fab_colorNormal="@color/ColorAccent"
-        fab:fab_colorPressed="@color/ColorAccentDark"
-        fab:fab_colorRipple="@color/ColorAccentRipple"
-     -->
 </FrameLayout>

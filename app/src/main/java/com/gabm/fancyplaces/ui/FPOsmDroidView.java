@@ -22,9 +22,7 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 
-//!!!
-import com.melnykov.fab.FloatingActionButton;
-// import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
