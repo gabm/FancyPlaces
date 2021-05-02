@@ -94,7 +94,7 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
         if (savedInstanceState == null)
             setStateFromIntent(getIntent());
 
-        locationHandler = ((FancyPlacesApplication) getApplicationContext()).getLocationHandler();
+        locationHandler = FancyPlacesApplication.getLocationHandler(getApplication());
         locationHandler.addOnLocationUpdatedListener(this);
 
         // if initialized from intent, update ui

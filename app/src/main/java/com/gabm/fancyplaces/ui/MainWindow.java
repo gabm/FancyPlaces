@@ -90,7 +90,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
         curAppContext = (FancyPlacesApplication) getApplicationContext();
 
-        if (curAppContext.getLocationHandler() == null) {
+        if (FancyPlacesApplication.getLocationHandler(getApplication()) == null) {
                 // if app wants to display my logcation: ask for permissions
                 if (ActivityCompat.checkSelfPermission(this, PERMISSION_READ_GPS)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -169,8 +169,8 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             case REQUEST_ID_READ_GPS: {
                 if (isGrantSuccess(grantResults)) {
                     // don-t ask again
-                    curAppContext.initLocationHandler();
                     onCreateWithPermission(firstSavedInstanceState);
+                    firstSavedInstanceState = null;
                 } else {
                     Toast.makeText(this, R.string.permission_error, Toast.LENGTH_LONG).show();
                     setResult(RESULT_NO_PERMISSIONS, null);

@@ -91,7 +91,7 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
         mapHandler = new OsmMapHandler(mMapView, fancyPlaceSelectedCallback);
         mapHandler.setAdapter(parent.fancyPlaceArrayAdapter);
 
-        locationHandler = ((FancyPlacesApplication) parent.getApplicationContext()).getLocationHandler();
+        locationHandler = FancyPlacesApplication.getLocationHandler( getActivity().getApplication());
         locationHandler.addOnLocationUpdatedListener(this);
         locationHandler.updateLocation(false);
 

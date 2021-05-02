@@ -24,6 +24,8 @@ import android.os.Environment;
 
 import com.gabm.fancyplaces.functional.LocationHandler;
 
+import org.osmdroid.config.Configuration;
+
 import java.io.File;
 
 /**
@@ -52,16 +54,22 @@ public class FancyPlacesApplication extends Application {
         // external export dir
         EXTERNAL_EXPORT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getResources().getString(R.string.app_name) + File.separator;
         (new File(EXTERNAL_EXPORT_DIR)).mkdirs();
+
+        //https://github.com/osmdroid/osmdroid/issues/366
+        //super important. Many tile servers, including open street maps, will BAN applications by user
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
     }
 
     public void initLocationHandler() {
-        // attach lifecycle callbacks to location handler
-        // Must be called from Activity to allow asking for permission
-        locationHandler = new LocationHandler((LocationManager) getSystemService(Context.LOCATION_SERVICE));
-        registerActivityLifecycleCallbacks(locationHandler);
     }
 
-    public LocationHandler getLocationHandler() {
+    public static LocationHandler getLocationHandler(Application context) {
+        if (locationHandler == null) {
+            // attach lifecycle callbacks to location handler
+            // Must be called from Activity to allow asking for permission
+            locationHandler = new LocationHandler((LocationManager) context.getSystemService(Context.LOCATION_SERVICE));
+            context.registerActivityLifecycleCallbacks(locationHandler);
+        }
         return locationHandler;
     }
 
