@@ -17,13 +17,16 @@
 
 package com.gabm.fancyplaces.ui;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -63,6 +66,10 @@ import java.util.List;
 
 
 public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelectedListener, IOnListModeChangeListener {
+    // gps-permission stuff
+    private static final int REQUEST_ID_READ_GPS = 2001;
+    private static final String PERMISSION_READ_GPS = Manifest.permission.ACCESS_FINE_LOCATION;
+    int RESULT_NO_PERMISSIONS = -22;
 
     public static int REQUEST_SHOW_EDIT_PLACE = 0;
     public static int REQUEST_FILE_SELECTION = 1;
@@ -130,6 +137,51 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         Uri u = getIntent().getData();
         if (u != null)
             loadFromFile(u.getPath());
+
+        if (false) { //!!!
+            if (curAppContext.getLocationHandler() == null) {
+                // if app wants to display my logcation: ask for permissions
+                if (ActivityCompat.checkSelfPermission(this, PERMISSION_READ_GPS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermission(PERMISSION_READ_GPS, REQUEST_ID_READ_GPS);
+                }
+            }
+        }
+
+    }
+
+    private void requestPermission(final String permission, final int requestCode) {
+        ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+    }
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_ID_READ_GPS: {
+                if (isGrantSuccess(grantResults)) {
+                    // don-t ask again
+                    curAppContext.initLocationHandler();
+                } else {
+                    Toast.makeText(this, R.string.permission_error, Toast.LENGTH_LONG).show();
+                    setResult(RESULT_NO_PERMISSIONS, null);
+                    finish();
+                    return;
+                }
+                return;
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private boolean isGrantSuccess(int[] grantResults) {
+        boolean success = (grantResults != null)
+                && (grantResults.length > 0)
+                && (grantResults[0] == PackageManager.PERMISSION_GRANTED);
+
+        return success;
     }
 
     protected void setDefaultTitle() {
