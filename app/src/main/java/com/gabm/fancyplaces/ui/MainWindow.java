@@ -93,7 +93,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
 
         curAppContext = (FancyPlacesApplication) getApplicationContext();
 
-        if (FancyPlacesApplication.getLocationHandler(getApplication()) == null) {
+        if (FancyPlacesApplication.mustInit()) {
                 // if app wants to display my logcation: ask for permissions
                 if (ActivityCompat.checkSelfPermission(this, PERMISSION_READ_GPS)
                         != PackageManager.PERMISSION_GRANTED) {

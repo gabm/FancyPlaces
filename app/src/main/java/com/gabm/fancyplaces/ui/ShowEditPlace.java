@@ -17,18 +17,24 @@
 
 package com.gabm.fancyplaces.ui;
 
+import android.Manifest;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+
 import android.provider.MediaStore;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.documentfile.provider.DocumentFile;
+
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +55,7 @@ import com.gabm.fancyplaces.functional.ScrollViewListener;
 
 import org.osmdroid.views.MapView;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -65,6 +72,8 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
     static private final int LOCATION_CHANGED_USER = 1;
     static private final int LOCATION_CHANGED_INIT = 2;
     static private final int REQUEST_IMAGE_CAPTURE = 0;
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
+
     static private FancyPlacesApplication curAppContext = null;
     ViewElements currentViewElements = new ViewElements();
     private SEPState currentState = new SEPState();
@@ -400,13 +409,13 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
                 break;
             case R.id.sep_action_take_image:
-                // create Intent to take a picture and return control to the calling application
-                Intent cam_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                cam_intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.parse("file://" + currentState.data.getImage().getFileName())); // set the image file name
-
-
-                // start the image capture Intent
-                startActivityForResult(cam_intent, REQUEST_IMAGE_CAPTURE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M  && checkSelfPermission(Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                MY_CAMERA_REQUEST_CODE);
+                        break;
+                }
+                onRequestPhoto();
                 break;
             case android.R.id.home:
                 onBackPressed();
@@ -414,6 +423,44 @@ public class ShowEditPlace extends AppCompatActivity implements LocationHandler.
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == MY_CAMERA_REQUEST_CODE) {
+
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                onRequestPhoto();
+                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+
+            } else {
+
+                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+
+            }
+
+        }
+    }
+
+    private void onRequestPhoto() {
+        // create Intent to take a picture and return control to the calling application
+        // File cameraResult = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR, "test33.jpg");
+        File cameraResult = new File(currentState.data.getImage().getFileName());
+        // Uri resultUri = Uri.fromFile(cameraResult);
+        Uri resultUri = DocumentFile.fromFile(cameraResult).getUri();
+        Intent cam_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        .putExtra(MediaStore.EXTRA_OUTPUT, resultUri)
+                .setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION );
+
+
+
+        // cam_intent.setClipData(ClipData.newRawUri("test", resultUri));
+
+        // start the image capture Intent
+        startActivityForResult(cam_intent, REQUEST_IMAGE_CAPTURE);
     }
 
     @Override

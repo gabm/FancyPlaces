@@ -105,6 +105,18 @@ public class SEPState implements Parcelable {
             notesTextViewVisibility = in.readInt();
         }
 
+        public final Creator<ViewElementVisibility> CREATOR = new Creator<ViewElementVisibility>() {
+            @Override
+            public ViewElementVisibility createFromParcel(Parcel in) {
+                return new ViewElementVisibility(in);
+            }
+
+            @Override
+            public ViewElementVisibility[] newArray(int size) {
+                return new ViewElementVisibility[size];
+            }
+        };
+
         @Override
         public int describeContents() {
             return 0;
