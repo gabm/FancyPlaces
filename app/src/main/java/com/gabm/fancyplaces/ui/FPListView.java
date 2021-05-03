@@ -20,7 +20,9 @@ package com.gabm.fancyplaces.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +32,6 @@ import android.widget.ListView;
 import com.gabm.fancyplaces.R;
 import com.gabm.fancyplaces.functional.IOnListModeChangeListener;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,7 @@ public class FPListView extends TabItem {
         // add places to list
         fancyPlacesList = (ListView) v.findViewById(R.id.fp_list_view);
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fp_list_fab);
-        fab.attachToListView(fancyPlacesList);
+        //!!!??? fab.attachToListView(fancyPlacesList);
 
         // set on click listener
         fab.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +83,7 @@ public class FPListView extends TabItem {
         return v;
     }
 
+    @Deprecated
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

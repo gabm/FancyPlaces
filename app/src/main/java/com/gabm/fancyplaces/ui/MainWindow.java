@@ -17,17 +17,20 @@
 
 package com.gabm.fancyplaces.ui;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
@@ -51,6 +54,7 @@ import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 import com.gabm.fancyplaces.functional.Utilities;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,6 +67,13 @@ import java.util.List;
 
 
 public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelectedListener, IOnListModeChangeListener {
+    // gps-permission stuff
+    private static final int REQUEST_ID_READ_GPS = 21;
+    private static final String PERMISSION_READ_GPS = Manifest.permission.ACCESS_FINE_LOCATION;
+
+    private static final int REQUEST_ID_FILE_WRITE = 23;
+    private static final String PERMISSION_FILE_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    int RESULT_NO_PERMISSIONS = -22;
 
     public static int REQUEST_SHOW_EDIT_PLACE = 0;
     public static int REQUEST_FILE_SELECTION = 1;
@@ -80,9 +91,23 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main_window);
-
         curAppContext = (FancyPlacesApplication) getApplicationContext();
+
+        if (FancyPlacesApplication.getLocationHandler(getApplication()) == null) {
+                // if app wants to display my logcation: ask for permissions
+                if (ActivityCompat.checkSelfPermission(this, PERMISSION_READ_GPS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermission(PERMISSION_READ_GPS, REQUEST_ID_READ_GPS);
+                    return;
+                }
+            }
+
+        onCreateWithPermission();
+    }
+
+    protected void onCreateWithPermission() {
+
+        setContentView(R.layout.activity_main_window);
 
         setDefaultTitle();
 
@@ -130,6 +155,52 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         Uri u = getIntent().getData();
         if (u != null)
             loadFromFile(u.getPath());
+
+    }
+
+    private void requestPermission(final String permission, final int requestCode) {
+        ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+    }
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_ID_READ_GPS: {
+                if (isGrantSuccess(grantResults)) {
+                    // don-t ask again
+                    onCreateWithPermission();
+                } else {
+                    Toast.makeText(this, R.string.permission_error, Toast.LENGTH_LONG).show();
+                    setResult(RESULT_NO_PERMISSIONS, null);
+                    finish();
+                    return;
+                }
+                return;
+            }
+
+            case REQUEST_ID_FILE_WRITE: {
+                if (isGrantSuccess(grantResults)) {
+                    // don-t ask again
+                    onExportToGpx();
+                } else {
+                    Toast.makeText(this, R.string.permission_error, Toast.LENGTH_LONG).show();
+                    setResult(RESULT_NO_PERMISSIONS, null);
+                }
+                return;
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private boolean isGrantSuccess(int[] grantResults) {
+        boolean success = (grantResults != null)
+                && (grantResults.length > 0)
+                && (grantResults[0] == PackageManager.PERMISSION_GRANTED);
+
+        return success;
     }
 
     protected void setDefaultTitle() {
@@ -168,25 +239,26 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 fancyPlacesDatabase.deleteFancyPlace(fp, true);
                 break;
             case OnFancyPlaceSelectedListener.INTENT_SHARE:
-                /*
-                try {
-                    String fileName = fp.saveToFile(getApplicationContext().getExternalCacheDir().getAbsolutePath());
+            /*
+            try {
+                String fileName = fp.saveToFile(getApplicationContext().getExternalCacheDir().getAbsolutePath());
 
-                    Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
 
-                    sharingIntent.setType("application/fancyplace");
-                    sharingIntent.putExtra(
-                            Intent.EXTRA_STREAM,
-                            Uri.parse("file://" + fileName));
-                    startActivity(Intent.createChooser(sharingIntent, "Share FancyPlace using"));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
+                sharingIntent.setType("application/fancyplace");
+                sharingIntent.putExtra(
+                        Intent.EXTRA_STREAM,
+                        Uri.parse("file://" + fileName));
+                startActivity(Intent.createChooser(sharingIntent, "Share FancyPlace using"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
                 break;
             case OnFancyPlaceSelectedListener.INTENT_CREATE_NEW:
                 showSEPActivityForResult(getApplicationContext(), new FancyPlace(), ShowEditPlace.MODE_EDIT);
                 break;
         }
+
     }
 
     protected void copyImageToTmp(FancyPlace fp) {
@@ -254,9 +326,10 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         }
     }
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == REQUEST_SHOW_EDIT_PLACE) {
+        if (requestCode == REQUEST_SHOW_EDIT_PLACE && data != null) {
             Bundle res = data.getExtras();
             FancyPlace fancyPlace = res.getParcelable("data");
 
@@ -271,11 +344,13 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             }
             (new ImageFile(com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FULL_PATH)).delete();
 
-        } else if (requestCode == REQUEST_FILE_SELECTION)
+        } else if (requestCode == REQUEST_FILE_SELECTION && data != null)
         {
             if (resultCode == RESULT_OK)
                 loadFromFile(data.getData().getPath());
 
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -357,9 +432,23 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            close(inputStream);
+            close(byteArrayOutputStream);
         }
 
         return byteArrayOutputStream.toString();
+    }
+
+    private void close(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Override
@@ -450,18 +539,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 return true;
 
             case R.id.main_window_share:
-                GPXExporter exporter = new GPXExporter();
-
-                File exportFile = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR, Utilities.shuffleFileName("FancyPlaces_", "") + ".zip");
-                if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile.getAbsolutePath())) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_successful) + exportFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_failed), Toast.LENGTH_LONG).show();
-
-                }
-
-                // set mode back to normal
-                fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
+                onExportToGpx();
                 return true;
             case R.id.main_window_import:
                 showFileSelector();
@@ -469,6 +547,27 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         }
 
         return false;
+    }
+
+    private void onExportToGpx() {
+        if (ActivityCompat.checkSelfPermission(this, PERMISSION_FILE_WRITE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(PERMISSION_FILE_WRITE, REQUEST_ID_FILE_WRITE);
+            return;
+        }
+
+        GPXExporter exporter = new GPXExporter();
+
+        File exportFile = new File(FancyPlacesApplication.EXTERNAL_EXPORT_DIR, Utilities.shuffleFileName("FancyPlaces_", "") + ".zip");
+        if (exporter.WriteToFile(fancyPlaceArrayAdapter.getSelectedFancyPlaces(), exportFile.getAbsolutePath())) {
+            Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_successful) + exportFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(), getString(R.string.gpx_export_failed), Toast.LENGTH_LONG).show();
+
+        }
+
+        // set mode back to normal
+        fpListView.setMultiSelectMode(IOnListModeChangeListener.MODE_NORMAL);
     }
 
     protected void showFileSelector() {

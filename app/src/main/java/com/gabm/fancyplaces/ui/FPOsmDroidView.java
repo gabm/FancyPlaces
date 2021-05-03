@@ -21,6 +21,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +33,6 @@ import com.gabm.fancyplaces.R;
 import com.gabm.fancyplaces.functional.LocationHandler;
 import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 import com.gabm.fancyplaces.functional.OsmMapHandler;
-import com.melnykov.fab.FloatingActionButton;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
@@ -80,7 +81,7 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
         View v = inflater.inflate(R.layout.fancy_places_osmview, container, false);
 
         mMapView = (OsmMapViewScrollWorkaround) v.findViewById(R.id.fp_map_view);
-        mMapView.setTileSource(TileSourceFactory.MAPQUESTOSM);
+        mMapView.setTileSource(TileSourceFactory.MAPNIK);
         mMapView.setMultiTouchControls(true);
         mMapView.setTilesScaledToDpi(true);
         mMapView.setWorkaroundEnabled(true);
@@ -88,7 +89,7 @@ public class FPOsmDroidView extends TabItem implements LocationHandler.OnLocatio
         mapHandler = new OsmMapHandler(mMapView, fancyPlaceSelectedCallback);
         mapHandler.setAdapter(parent.fancyPlaceArrayAdapter);
 
-        locationHandler = ((FancyPlacesApplication) parent.getApplicationContext()).getLocationHandler();
+        locationHandler = FancyPlacesApplication.getLocationHandler( getActivity().getApplication());
         locationHandler.addOnLocationUpdatedListener(this);
         locationHandler.updateLocation(false);
 

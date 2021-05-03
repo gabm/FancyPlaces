@@ -4,7 +4,7 @@
     tools:context="com.gabm.fancyplaces.ui.MainWindow">
     <item
         android:id="@+id/main_window_import"
-        android:icon="@drawable/ic_get_app_white_24dp"
+        android:icon="@drawable/ic_launcher"
         android:title="@string/context_menu_gpx_import"
         android:visible="true"
         app:showAsAction="ifRoom" />
