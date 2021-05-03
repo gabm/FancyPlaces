@@ -54,6 +54,7 @@ import com.gabm.fancyplaces.functional.OnFancyPlaceSelectedListener;
 import com.gabm.fancyplaces.functional.Utilities;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,7 +86,6 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
     private LFPState curState = new LFPState();
     private ArrayList<FancyPlace> fancyPlaces = null;
     private FPListView fpListView = null;
-    private Bundle firstSavedInstanceState = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,15 +98,14 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 if (ActivityCompat.checkSelfPermission(this, PERMISSION_READ_GPS)
                         != PackageManager.PERMISSION_GRANTED) {
                     requestPermission(PERMISSION_READ_GPS, REQUEST_ID_READ_GPS);
-                    firstSavedInstanceState = savedInstanceState;
                     return;
                 }
             }
 
-        onCreateWithPermission(savedInstanceState);
+        onCreateWithPermission();
     }
 
-    protected void onCreateWithPermission(Bundle savedInstanceState) {
+    protected void onCreateWithPermission() {
 
         setContentView(R.layout.activity_main_window);
 
@@ -172,8 +171,7 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             case REQUEST_ID_READ_GPS: {
                 if (isGrantSuccess(grantResults)) {
                     // don-t ask again
-                    onCreateWithPermission(firstSavedInstanceState);
-                    firstSavedInstanceState = null;
+                    onCreateWithPermission();
                 } else {
                     Toast.makeText(this, R.string.permission_error, Toast.LENGTH_LONG).show();
                     setResult(RESULT_NO_PERMISSIONS, null);
@@ -241,25 +239,26 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
                 fancyPlacesDatabase.deleteFancyPlace(fp, true);
                 break;
             case OnFancyPlaceSelectedListener.INTENT_SHARE:
-                /*
-                try {
-                    String fileName = fp.saveToFile(getApplicationContext().getExternalCacheDir().getAbsolutePath());
+            /*
+            try {
+                String fileName = fp.saveToFile(getApplicationContext().getExternalCacheDir().getAbsolutePath());
 
-                    Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
 
-                    sharingIntent.setType("application/fancyplace");
-                    sharingIntent.putExtra(
-                            Intent.EXTRA_STREAM,
-                            Uri.parse("file://" + fileName));
-                    startActivity(Intent.createChooser(sharingIntent, "Share FancyPlace using"));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
+                sharingIntent.setType("application/fancyplace");
+                sharingIntent.putExtra(
+                        Intent.EXTRA_STREAM,
+                        Uri.parse("file://" + fileName));
+                startActivity(Intent.createChooser(sharingIntent, "Share FancyPlace using"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
                 break;
             case OnFancyPlaceSelectedListener.INTENT_CREATE_NEW:
                 showSEPActivityForResult(getApplicationContext(), new FancyPlace(), ShowEditPlace.MODE_EDIT);
                 break;
         }
+
     }
 
     protected void copyImageToTmp(FancyPlace fp) {
@@ -327,9 +326,10 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
         }
     }
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == REQUEST_SHOW_EDIT_PLACE) {
+        if (requestCode == REQUEST_SHOW_EDIT_PLACE && data != null) {
             Bundle res = data.getExtras();
             FancyPlace fancyPlace = res.getParcelable("data");
 
@@ -344,11 +344,13 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             }
             (new ImageFile(com.gabm.fancyplaces.FancyPlacesApplication.TMP_IMAGE_FULL_PATH)).delete();
 
-        } else if (requestCode == REQUEST_FILE_SELECTION)
+        } else if (requestCode == REQUEST_FILE_SELECTION && data != null)
         {
             if (resultCode == RESULT_OK)
                 loadFromFile(data.getData().getPath());
 
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -430,9 +432,23 @@ public class MainWindow extends AppCompatActivity implements OnFancyPlaceSelecte
             inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            close(inputStream);
+            close(byteArrayOutputStream);
         }
 
         return byteArrayOutputStream.toString();
+    }
+
+    private void close(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Override

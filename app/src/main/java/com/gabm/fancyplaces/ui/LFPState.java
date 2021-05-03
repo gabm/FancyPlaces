@@ -39,6 +39,18 @@ public class LFPState implements Parcelable {
         curMenu = in.readInt();
     }
 
+    public static final Creator<LFPState> CREATOR = new Creator<LFPState>() {
+        @Override
+        public LFPState createFromParcel(Parcel in) {
+            return new LFPState(in);
+        }
+
+        @Override
+        public LFPState[] newArray(int size) {
+            return new LFPState[size];
+        }
+    };
+
     @Override
     public int describeContents() {
         return 0;
