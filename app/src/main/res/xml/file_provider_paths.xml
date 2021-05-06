@@ -1,0 +1,5 @@
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- see https://developer.android.com/reference/androidx/core/content/FileProvider -->
+    <external-cache-path name="shared" path="./"/>
+</paths>
+

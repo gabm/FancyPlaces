@@ -60,7 +60,8 @@ public class FancyPlacesApplication extends Application {
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
     }
 
-    public void initLocationHandler() {
+    public static boolean mustInit() {
+        return (locationHandler == null);
     }
 
     public static LocationHandler getLocationHandler(Application context) {
